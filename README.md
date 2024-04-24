@@ -8,6 +8,7 @@
 - we can switch to a database with the use command though and you can even switch to databases which don't exist yet.
 
 > db.flights.insertOne({})
+
 > db.flights.insertOne({"departureAirport": "MUC", arrivalAirport: "SFO", aircraft: "Airbus A380", distance: 12000, intercontinental: true})
 - db.<collection_name>.<command_name>()
 
