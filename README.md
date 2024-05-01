@@ -35,9 +35,21 @@
 
 3. Update
 - updateOne(filter, data, options)
+> db.flights.updateOne({distance: 12000}, {$set: {marker:'delete'}})
+we first of all define a filter where we say which document should be updated. The second argument is what do you want to update, if its not there then it will create one. Now this might add a new field marker with the value delete to that first element. to update or insert new data we have to use a special keyword $set.$set is simply identified by mongodb when used in the update one operation to describe the changes you want to make. 
+
 - updateMany(filter, data, options)
+> db.flights.updateMany({}, {$set: {marker:'toDelete'}})
+we can simply pass empty curly braces and this will select all documents.
+
 - replaceOne(filter, data, options)
 
 4. Delete
 - deleteOne(filter, options)
+> db.flights.deleteOne({departureAirport: 'TXT'})
+Delete one takes a filter to find out which document to delete and now we could filter for all kinds of things. A filter is defined as a document, so with curly braces and then in its simplest form, you now simply define which key and which value you want to delete or the document with that key and value you want to delete.
+this deleteOne find the first document in our database where the departure airport is txl and delete it.
+
 - deleteMany(filter, options)
+> db.flights.deleteMany({marker: 'toDelete'})
+we could also use delete many and pass an empty pair of curly braces, this should delete all elements. but if we want to delete some specific documents then we have to pass some filter.
