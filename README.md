@@ -1,19 +1,22 @@
 # MongoDB
-mongodb does not use json but bson on which stands for binary json for storing data in your database.
-mongodb supports multiple storage engines but wired tiger is the default one is a high performant one is a really good storage engine, also we can switch the storage engine if we want to
+- mongodb does not use json but bson on which stands for binary json for storing data in your database.
+- mongodb supports multiple storage engines but wired tiger is the default one is a high performant one is a really good storage engine, also we can switch the storage engine if we want to
 
 ```
 show dbs
 ```
 its show existing databases
 
+```
 use flights
-you can connect to a database with the "use command" and you can connect to a brand new database by simply typing its name even if this doesn't exist yet, it will be created on the fly once you start inserting data.
-we can switch to a database with the use command though and you can even switch to databases which don't exist yet.
+```
+- you can connect to a database with the "use command" and you can connect to a brand new database by simply typing its name even if this doesn't exist yet, it will be created on the fly once you start inserting data.
+- we can switch to a database with the use command though and you can even switch to databases which don't exist yet.
 
-db.flights.insertOne({})
-
-> db.flights.insertOne({"departureAirport": "MUC", arrivalAirport: "SFO", aircraft: "Airbus A380", distance: 12000, intercontinental: true})
+```
+db.flights.insertOne({"departureAirport": "MUC", arrivalAirport: "SFO", aircraft: "Airbus A380", distance: 12000, intercontinental: true})
+```
+> db.flights.insertOne({})
 - db.<collection_name>.<command_name>()
 
 > _id: ObjectId('_id')
