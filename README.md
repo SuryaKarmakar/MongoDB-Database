@@ -38,7 +38,16 @@ db.flights.find()
 
 1. Create
 - insertOne(data, options)
+```
+db.flights.insertOne({"departureAirport": "MUC", arrivalAirport: "SFO", aircraft: "Airbus A380", distance: 12000, intercontinental: true})
+```
+- insertOne insert one data on collection at a time.
+
 - insertMany(data, options)
+```
+db.flights.insertMany([{"departureAirport": "MUC", "arrivalAirport": "SFO", "aircraft": "Airbus A380", "distance": 12000, "intercontinental": true}, {"departureAirport": "LHR", "arrivalAirport": "TXL", "aircraft": "Airbus A320", "distance": 950, "intercontinental": false}])
+```
+- insertMany now allows you well as the name suggests, to insert many elements by passing an array of objects.
 
 2. Read
 - find(filter, options)
@@ -49,13 +58,13 @@ db.flights.find()
 ```
 db.flights.updateOne({distance: 12000}, {$set: {marker:'delete'}})
 ```
-we first of all define a filter where we say which document should be updated. The second argument is what do you want to update, if its not there then it will create one. Now this might add a new field marker with the value delete to that first element. to update or insert new data we have to use a special keyword $set.$set is simply identified by mongodb when used in the update one operation to describe the changes you want to make. 
+- we first of all define a filter where we say which document should be updated. The second argument is what do you want to update, if its not there then it will create one. Now this might add a new field marker with the value delete to that first element. to update or insert new data we have to use a special keyword $set.$set is simply identified by mongodb when used in the update one operation to describe the changes you want to make. 
 
 - updateMany(filter, data, options)
 ```
 db.flights.updateMany({}, {$set: {marker:'toDelete'}})
 ```
-we can simply pass empty curly braces and this will select all documents.
+- we can simply pass empty curly braces and this will select all documents.
 
 - replaceOne(filter, data, options)
 
@@ -64,11 +73,11 @@ we can simply pass empty curly braces and this will select all documents.
 ```
 db.flights.deleteOne({departureAirport: 'TXT'})
 ```
-Delete one takes a filter to find out which document to delete and now we could filter for all kinds of things. A filter is defined as a document, so with curly braces and then in its simplest form, you now simply define which key and which value you want to delete or the document with that key and value you want to delete.
+- Delete one takes a filter to find out which document to delete and now we could filter for all kinds of things. A filter is defined as a document, so with curly braces and then in its simplest form, you now simply define which key and which value you want to delete or the document with that key and value you want to delete.
 this deleteOne find the first document in our database where the departure airport is txl and delete it.
 
 - deleteMany(filter, options)
 ```
 db.flights.deleteMany({marker: 'toDelete'})
 ```
-we could also use delete many and pass an empty pair of curly braces, this should delete all elements. but if we want to delete some specific documents then we have to pass some filter.
+- we could also use delete many and pass an empty pair of curly braces, this should delete all elements. but if we want to delete some specific documents then we have to pass some filter.
