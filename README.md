@@ -51,7 +51,26 @@ insertMany now allows you well as the name suggests, to insert many elements by 
 
 2. Read
 - find(filter, options)
+```
+db.flights.find()
+db.flights.find({})
+```
+without any arguments or empty curly braces find return all the documents in the collection.
+```
+db.flights.find({intercontinental:true})
+```
+if we want some specific documents then we need to use filters.
+```
+db.flights.find({distance: {$gt: 1000}})
+db.flights.find({distance: {$lt: 1000}})
+```
+$gt and $lt is special operators provided by mongodb and this means greater than($gt) and less than($lt).
+
 - findOne(filter, options)
+```
+db.flights.findOne({distance: {$gt: 500}})
+```
+findOne is same like find but its only retun first matching element of the collection.
 
 3. Update
 - updateOne(filter, data, options)
