@@ -85,7 +85,17 @@ db.flights.updateMany({}, {$set: {marker:'toDelete'}})
 ```
 we can simply pass empty curly braces and this will select all documents.
 
+- update(filter, data, options)
+```
+db.flights.update({_id: ObjectId('66348627b26c361323c8edb2')}, {$set:{delayed: true}})
+```
+update works a bit like updateMany, updateMany was used to update all matching elements and update would also update all matching elements. 
+
 - replaceOne(filter, data, options)
+```
+db.flights.replaceOne({_id: ObjectId('66348627b26c361323c8edb2')}, {delayed: false})
+```
+replaceOne use to replace the existing document to new document. replaceOne dont need $set. it overwrote all the other key value pairs and that is the thing about replaceOne. replaceOne does accept this syntax with just an object and it will then take this object and basically replace the existing object with this new object, with this new document, it will only keep the ID.
 
 4. Delete
 - deleteOne(filter, options)
