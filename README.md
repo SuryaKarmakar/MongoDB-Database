@@ -129,3 +129,16 @@ db.passengers.find().forEach((item) => {printjson(item)})
 you can use forEach to loop through the collection
 
 ## Understanding Projection : 
+- projection is use to filter out the data in server before sending the responce. sending all data would impact your bandwidth, you would fetch unnecessary data and you want to prevent this, so it would be better to filter this out on the mongodb server and this is exactly what projection can help you with.
+
+```
+ db.passengers.find({}, {name: 1})
+```
+- projection use second argument, so that first argument now is an empty document because I want to find all passengers and I don't want to pass a filter and the second argument now allows us to project.
+- here(second argument) you simply specify which key value pairs you want to get. so let's say in our passengers, we have a name and we want to get that name, so we type name here and then as a value, simply a 1, this means include it in the data you're returning to me.
+- The _id is a special field in your data, by default it's always included even if you use projection as we do it with the second argument, the _id is always included too.
+
+```
+ db.passengers.find({}, {name: 1, _id: 0})
+```
+- the _id is also always included, you have to explicitly exclude it if you don't want to add it. Now you exclude something by simply specifying its name and then using 0 instead of 1,
