@@ -142,4 +142,31 @@ you can use forEach to loop through the collection
 ```
  db.passengers.find({}, {name: 1, _id: 0})
 ```
-- the _id is also always included, you have to explicitly exclude it if you don't want to add it. Now you exclude something by simply specifying its name and then using 0 instead of 1,
+- the _id is also always included, you have to explicitly exclude it if you don't want to add it. Now you exclude something by simply specifying its name and then using 0 instead of 1.
+
+## Embedded Documents & Arrays :
+
+- Adding nested documents :
+you can have multiple such documents and these documents can have other sub documents which can have other sub documents, so you can nest your documents all in one overarching document in one collection.
+```
+db.flights.updateMany({}, {$set: {status: {description : "on-time", lastUpdated: "1 hour ago"}}})
+db.flights.updateMany({}, {$set: {status: {description : "on-time", lastUpdated: "1 hour ago", details: {responsible: "Surya Karmakar"}}}})
+
+db.passengers.updateOne({_id: ObjectId('663c9efc62ddf771fbc0b008')}, {$set: {hobbies: ["sports", "cooking"]}})
+```
+
+- Accessing Structured Data :
+```
+db.passengers.findOne({_id: ObjectId('663c9efc62ddf771fbc0b008')})
+db.passengers.findOne({_id: ObjectId('663c9efc62ddf771fbc0b008')}).hobbies
+```
+We can now access hobbies array using findOne({}).hobbies. find will give us that person and .hobbies should give us access to the array.
+
+```
+ db.passengers.findOne({hobbies: "sports"})
+```
+if we want to find all passengers with a hobby of sports then we can search like this ({hobbies: "sports"}). mongodb is clever enough to see that hobbies actually is an array so it will simply look if that array has one element named sports and then it gives us the entire document as a result.
+
+```
+db.flights.find({'status.description': 'on-time'})
+```
