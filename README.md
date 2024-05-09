@@ -134,6 +134,7 @@ you can use forEach to loop through the collection
 ```
  db.passengers.find({}, {name: 1})
 ```
+- we are not filtering the ducuments, the first argument use to filtering ducuments and projection use to filtering the keys present in ducuments.
 - projection use second argument, so that first argument now is an empty document because I want to find all passengers and I don't want to pass a filter and the second argument now allows us to project.
 - here(second argument) you simply specify which key value pairs you want to get. so let's say in our passengers, we have a name and we want to get that name, so we type name here and then as a value, simply a 1, this means include it in the data you're returning to me.
 - The _id is a special field in your data, by default it's always included even if you use projection as we do it with the second argument, the _id is always included too.
