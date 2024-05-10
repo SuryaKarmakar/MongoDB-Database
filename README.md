@@ -171,3 +171,52 @@ if we want to find all passengers with a hobby of sports then we can search like
 db.flights.find({'status.description': 'on-time'})
 ```
 we can use status dot and then the nested field, so you use dot notation to drill into your embedded document. so when having a dot in here, when using such a path to a nested field, you need to wrap the entire term with double quotation marks though otherwise it will fail.
+
+## Schemas & Relations:
+
+- Why Do We Use Schemas?
+
+MongoDB is a NoSQL and document-oriented database. MongoDB stores the records in a document in BSON format. Unlike SQL databases, it allows the documents in the collection to have different structures. There are some scenarios where the user needs to have a specific structure for the data stored in the document. This is a common practice to maintain data integrity and consistency.
+
+- Schema Validation
+
+Schema validation in MongoDB is a feature that allows us to set the structure for the data in the document of a collection. We follow some set of rules, and validation rules, which ensure that the data we insert or update follows a specific predefined schema and ensures the data must have only specific datatypes, required fields, and validation expressions mentioned in the predefined schema.
+
+- Structuring Documents
+
+```
+{
+  title: 'Book',
+  price: 12.99
+},
+{
+  name: 'Bottle',
+  available: true
+}
+```
+1. we can use a collection with totally different products in there, so that is possible in mongodb but it's probably not what you need or what you'll use in reality.
+
+```
+{
+  title: 'Book',
+  price: 12.99
+},
+{
+  title: 'Bottle',
+  price: 5.99
+  available: true
+}
+```
+2. Maybe you're somewhere in between, you got some kind of schema, for example here all my products have a title and a price but you got some extra information on some of your documents, so there is maybe some extra data on some documents but the general schema is the same and there probably are some core fields which exist on every document.
+
+```
+{
+  title: 'Book',
+  price: 12.99
+},
+{
+  title: 'Bottle',
+  price: 5.99
+}
+```
+3. Or you got the other extreme where all documents have exactly the same structure, like here.
