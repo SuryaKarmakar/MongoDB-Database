@@ -170,3 +170,4 @@ if we want to find all passengers with a hobby of sports then we can search like
 ```
 db.flights.find({'status.description': 'on-time'})
 ```
+we can use status dot and then the nested field, so you use dot notation to drill into your embedded document. so when having a dot in here, when using such a path to a nested field, you need to wrap the entire term with double quotation marks though otherwise it will fail.
