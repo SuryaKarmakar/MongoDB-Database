@@ -262,3 +262,32 @@ Ex -> insertedAt : new Timestamp()
 7.  Array : [1,2,3,5]
 
 Ex -> tags: [{title: "good"}, {title: "perfect"}]
+
+## Data Schemas and Data Modelling :
+
+Suppose we have to store user details with thire favorit books list.
+
+1. we can store favorit books document as a nested document.
+```
+{
+  userName: 'surya',
+  favBooks: [{...}, {...}, {...}]
+}
+```
+
+2. or new can create 2 user and books collction and store books id on user document as a reference.
+
+- Users collection
+```
+{
+  userName: 'surya',
+  favBooks: ['id:1', 'id:2', 'id:3']
+}
+```
+- Books collection
+```
+{
+  _id: 'id1',
+  name: 'mongoDB for begeners'
+}
+```
