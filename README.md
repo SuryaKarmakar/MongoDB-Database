@@ -275,7 +275,7 @@ Suppose we have to store user details with thire favorit books list.
 }
 ```
 
-2. or new can create 2 user and books collection and store books id on user document as a reference.
+2. or we can create 2 user and books collection and store books id on user document as a reference.
 
 - Users collection
 ```
