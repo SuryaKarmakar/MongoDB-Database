@@ -291,3 +291,28 @@ Suppose we have to store user details with thire favorit books list.
   name: 'mongoDB for begeners'
 }
 ```
+
+## One To One Relations:
+
+Ex1: Let's say we're creating our database, our application for a hospital and there, we got patients and there, disease summary. So every patient has one disease summary which belongs to that patient only and there is only one summary per patient. the summary of patient A can never belong to patient B and the other way around.
+
+- Using References
+
+so using reference we can create 2 different collction like patients to store all patients details and diseaseSummary to store thire disease details.
+```
+db.patients.insertOne({name: "Surya", age: 24, diseaseSummary: "summary-max-1"})
+db.diseaseSummary.insertOne({_id: "summary-max-1", diseases:["cold", "broken leg"]})
+```
+
+now we have a request where we need that patient and also the disease history. then we have to find both data form separate collection and combine them uisng whatever programing language you are using.
+```
+const diseaseSummaryID = db.patients.findOne({name: "Surya"}).diseaseSummary
+db.diseaseSummary.findOne({_id: diseaseSummaryID})
+```
+
+- Using Embedded
+
+the better approach in such a case where we have a strong one-to-one relation would be to use embedded document.
+```
+db.patients.insertOne({name: "Surya", age: 24, diseaseSummary: {diseases:["cold", "broken leg"]}})
+```
