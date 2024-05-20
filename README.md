@@ -321,8 +321,6 @@ db.patients.insertOne({name: "Surya", age: 24, diseaseSummary: {diseases:["cold"
 
 we can store data using embedded document or using references both are fine. but its depends on your project requirement.
 
-EX - 1
-
 - Using Embedded
 
 1. We have question threads and each question thread has a couple of answers, so an answer only belongs to one thread but a thread can have multiple answers, that's a typical one-to-many relationship.
