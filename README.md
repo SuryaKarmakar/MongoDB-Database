@@ -294,7 +294,7 @@ Suppose we have to store user details with thire favorit books list.
 
 ## One To One Relations:
 
-Ex1: Let's say we're creating our database, our application for a hospital and there, we got patients and there, disease summary. So every patient has one disease summary which belongs to that patient only and there is only one summary per patient. the summary of patient A can never belong to patient B and the other way around.
+Let's say we're creating our database, our application for a hospital and there, we got patients and there, disease summary. So every patient has one disease summary which belongs to that patient only and there is only one summary per patient. the summary of patient A can never belong to patient B and the other way around.
 
 - Using References
 
@@ -316,3 +316,22 @@ the better approach in such a case where we have a strong one-to-one relation wo
 ```
 db.patients.insertOne({name: "Surya", age: 24, diseaseSummary: {diseases:["cold", "broken leg"]}})
 ```
+
+## One To Many Relations:
+
+we can store data using embedded document or using references both are fine. but its depends on your project requirement.
+
+EX - 1
+
+- Using Embedded
+
+1. We have question threads and each question thread has a couple of answers, so an answer only belongs to one thread but a thread can have multiple answers, that's a typical one-to-many relationship.
+
+Q1 -> [Ans1, Ans2, Ans3]
+Q2 -> [Ans4, Ans5]
+Q3 -> [Ans6]
+
+- Using References
+
+1. Lets say we have to store which person living in which city. so in that case city can be common for multiple person and what if we want to fetch only cities data no need the person data, in this case storing cities in a separated collection might work better.
+
