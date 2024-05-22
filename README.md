@@ -333,3 +333,6 @@ Q3 -> [Ans6]
 
 1. Lets say we have to store which person living in which city. so in that case city can be common for multiple person and what if we want to fetch only cities data no need the person data, in this case storing cities in a separated collection might work better.
 
+## Many To Many Relations:
+
+So let's say we have customers who can buy products, so we're looking at orders, a customer might buy multiple products and a product might be bought by different customers, so one customer have many products, one product have many customers. So this is a typical many-to-many relationship
