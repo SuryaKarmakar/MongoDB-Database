@@ -336,3 +336,20 @@ Q3 -> [Ans6]
 ## Many To Many Relations:
 
 So let's say we have customers who can buy products, so we're looking at orders, a customer might buy multiple products and a product might be bought by different customers, so one customer have many products, one product have many customers. So this is a typical many-to-many relationship
+
+## Structure & Define Schemas Example 1:
+
+let's say we're building a blog as the title says, so users are able to create posts, edit posts, delete posts, fetch all posts so that we can display a list of posts on a page, fetch a single post so we can read that post and also comment posts.
+
+1. Well a user can create a post or create multiple posts. each post belogn to only one user.
+2. A user can also comment a post, so a post can have multiple comments where each comment also knows which user created the comment.
+
+- creating a users collection to store all users data.
+```
+db.users.insertMany([{name : "Surya Karmakar", age: 24, email: "suryak@gmail.com"}, {name: "Test User", age: 26, email: "test@gmail.com"}])
+```
+
+- creating a posts collection to store all posts data embedded with comments and users references.
+```
+db.posts.insertOne({title: "My first post", text: "This is my first post, I hope you like it", tags: ["new", "tech"], creator: ObjectId('66543999476db14e9969d7eb'), comments: [{ text: "I like this post", author: ObjectId('66543999476db14e9969d7ec')}]})
+```
