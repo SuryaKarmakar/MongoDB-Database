@@ -317,6 +317,58 @@ db.createCollection('posts', {
   }
 })
 ```
+## Changing the Validation Action:
+
+After adding validation if we want to change the validation in letter we can do that using db.runCommand.
+
+1. collMod, that stands for collection modifier and we define the collection which we do want to modify.
+2. So now we can pass exactly what we pass to create collection, so we pass validator and then the entire schema below that.
+3. now we have to set a validation action here. The default is error which blocks the action and throws an error, I'll set it to warn.
+
+```
+db.runCommand({
+  collMod: 'posts',
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['title', 'text', 'creator', 'comments'],
+      properties: {
+        title: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        text: {
+          bsonType: 'string',
+          description: 'must be a string and is required'
+        },
+        creator: {
+          bsonType: 'objectId',
+          description: 'must be an objectid and is required'
+        },
+        comments: {
+          bsonType: 'array',
+          description: 'must be an array and is required',
+          items: {
+            bsonType: 'object',
+            required: ['text', 'author'],
+            properties: {
+              text: {
+                bsonType: 'string',
+                description: 'must be a string and is required'
+              },
+              author: {
+                bsonType: 'objectId',
+                description: 'must be an objectid and is required'
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  validationAction: 'warn'
+})
+```
 
 ## Structure & Define Schemas Example 1:
 
