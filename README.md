@@ -85,6 +85,52 @@ db.flights.insert({"departureAirport": "MUC", arrivalAirport: "SFO", aircraft: "
 
 the insert method can still be used, it's just not recommended. it can be insert both one and manny documents. but this command not return the genarated _id, so if you're building an application where you insert some data into the database, then often you want to get that _id back of that insert operation and immediately use it in your app, then you have to find that _id manually. So this is also another reason why insert is not that great.
 
+- Ordered Inserts:
+
+first lets insert some hobbies data with our custom _ids. so now i got these three entries in there and i got my own _id.
+```
+db.hobbies.insertMany([{_id: "sports", name: "Sports"}, {_id: "cooking", name: "Cooking"}, {_id: "cars", name: "Cars"}])
+```
+
+Now let's say I repeat that operation, so I add more hobbies. but this time leave cooking as it is. so I try to enter data with an _id that already exists in the database. What happens if I now hit enter? Well if I do this, I get an error and its says 'E11000 duplicate key error collection: test.hobbies index: _id_ dup key: { _id: "cooking" }'
+
+```
+db.hobbies.insertMany([{_id: "yoga", name: "Yoga"}, {_id: "cooking", name: "Cooking"}, {_id: "hiking", name: "Hiking"}])
+```
+
+Now if i see my hobbies collection then i can see only yoga is added then its stop adding hiking. the execution is faield after this error and this is the default behavior of mongodb. and this is called an ordered insert and ordered inserts simply means that every element you insert is processed standalone but if one fails, it cancels the entire insert operation but it does not rollback the elements it already inserted thats why its added the yoga and not hiking.
+
+```
+db.hobbies.find()
+[
+  { _id: 'sports', name: 'Sports' },
+  { _id: 'cooking', name: 'Cooking' },
+  { _id: 'cars', name: 'Cars' },
+  { _id: 'yoga', name: 'Yoga' } <- new added
+]
+
+```
+
+we can override this behavior. Well we can pass a second argument separated with a comma to insert many, it is a document that configures this operation. And here we can set some options and the option that helps us in this case here is the ordered option, the ordered option allows us to specify whether mongodb should perform an ordered insert which is the default.
+
+Now if I hit enter, I still get that error but this time execution is not stoping after getting error.
+
+```
+ db.hobbies.insertMany([{_id: "yoga", name: "Yoga"}, {_id: "cooking", name: "Cooking"}, {_id: "hiking", name: "Hiking"}], {ordered: false})
+```
+Now you can see hiking is added successful.
+
+```
+db.hobbies.find()
+[
+  { _id: 'sports', name: 'Sports' },
+  { _id: 'cooking', name: 'Cooking' },
+  { _id: 'cars', name: 'Cars' },
+  { _id: 'yoga', name: 'Yoga' },
+  { _id: 'hiking', name: 'Hiking' } <- added after error
+]
+```
+
 2. Read
 
 - find(filter, options)
