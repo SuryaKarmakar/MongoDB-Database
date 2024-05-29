@@ -75,7 +75,15 @@ insertMany now allows you well as the name suggests, to insert many elements by 
 
 - insert()
 
-the insert method can still be used, it's just not recommended. it can be insert both one and manny documents. but this command not return the genarated _id so if you're building an application where you insert some data into the database, then often you want to get that _id back of that insert operation and immediately use it in your app then you have to find that _id manually. So this is also another reason why insert is not that great.
+```
+db.flights.insert([{"departureAirport": "MUC", "arrivalAirport": "SFO", "aircraft": "Airbus A380", "distance": 12000, "intercontinental": true}, {"departureAirport": "LHR", "arrivalAirport": "TXL", "aircraft": "Airbus A320", "distance": 950, "intercontinental": false}])
+```
+
+```
+db.flights.insert({"departureAirport": "MUC", arrivalAirport: "SFO", aircraft: "Airbus A380", distance: 12000, intercontinental: true})
+```
+
+the insert method can still be used, it's just not recommended. it can be insert both one and manny documents. but this command not return the genarated _id, so if you're building an application where you insert some data into the database, then often you want to get that _id back of that insert operation and immediately use it in your app, then you have to find that _id manually. So this is also another reason why insert is not that great.
 
 2. Read
 
