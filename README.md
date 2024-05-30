@@ -131,6 +131,18 @@ db.hobbies.find()
 ]
 ```
 
+- Write Concern:
+
+Write concern describes the level of acknowledgment requested from MongoDB for write operations
+
+```
+{ w: <value>, j: <boolean>, wtimeout: <number> }
+db.persons.insertOne({name: "Surya", age: 24}, {writeConcern: {w: 1, j: true, wtimeout: 1}})
+```
+a. the w option to request acknowledgment that the write operation has propagated to a specified number of mongod instances or to mongod instances with specified tags.
+b. the j option to request acknowledgment that the write operation has been written to the on-disk journal.
+c. the wtimeout option to specify a time limit to prevent write operations from blocking indefinitely.
+
 2. Read
 
 - find(filter, options)
