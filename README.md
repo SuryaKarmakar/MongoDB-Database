@@ -143,6 +143,15 @@ a. the w option to request acknowledgment that the write operation has propagate
 b. the j option to request acknowledgment that the write operation has been written to the on-disk journal.
 c. the wtimeout option to specify a time limit to prevent write operations from blocking indefinitely.
 
+- Atomicity:
+
+Let's say we have an insert one operation but this could be any write operation again, now such operation most of the time will of course succeed but it can fail as well.
+
+In database systems, “atomicity” refers to the all-or-nothing nature of transactions. If a transaction consists of multiple operations, either all of them are executed successfully, or none of them are, ensuring the database remains in a consistent state.
+
+Success: If the operation succeeds, the document is saved in the database.
+Error: If an error occurs, the operation is rolled back, meaning no changes are made to the database.
+
 2. Read
 
 - find(filter, options)
