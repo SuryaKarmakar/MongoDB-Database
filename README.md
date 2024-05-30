@@ -601,3 +601,15 @@ Q3 -> [Ans6]
 ## Many To Many Relations:
 
 So let's say we have customers who can buy products, so we're looking at orders, a customer might buy multiple products and a product might be bought by different customers, so one customer have many products, one product have many customers. So this is a typical many-to-many relationship
+
+## Deploying a MongoDB Server:
+
+- Using MongoDB Atlas and Cluster:
+
+1. Sign in a mongodb Atlas as a free.
+2. Create a Organizations.
+3. Create a Projects.
+4. Now you can create Clusters for you project. you can create free Cluster for learning and testing mongoDB.
+5. After creating cluster now you can connect with different types of drivers, compass, shell etc.
+6. After connecting cluster you can create, read, update, delete etc in your cloud database.
+
