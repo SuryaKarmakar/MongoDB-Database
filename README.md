@@ -233,9 +233,14 @@ this deleteOne find the first document in our database where the departure airpo
 
 ```
 db.flights.deleteMany({marker: 'toDelete'})
+db.flights.deleteMany({marker: 'toDelete', departureAirport: 'TXT'})
 ```
 
 we could also use delete many and pass an empty pair of curly braces, this should delete all elements. but if we want to delete some specific documents then we have to pass some filter.
+
+```
+db.flights.deleteMany({})
+```
 
 ## find() & the Cursor Object :
 
