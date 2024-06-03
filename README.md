@@ -242,10 +242,16 @@ we could also use delete many and pass an empty pair of curly braces, this shoul
 db.flights.deleteMany({})
 ```
 
-you can delete a full collection using drop command.
+you can delete a full collection using drop() command.
 
 ```
 db.flights.drop()
+```
+
+deleting a database we can use dropDatabase() command.
+
+```
+db.dropDatabase()
 ```
 
 ## find() & the Cursor Object :
