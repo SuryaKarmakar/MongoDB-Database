@@ -236,23 +236,20 @@ db.flights.deleteMany({marker: 'toDelete'})
 db.flights.deleteMany({marker: 'toDelete', departureAirport: 'TXT'})
 ```
 
-we could also use delete many and pass an empty pair of curly braces, this should delete all elements. but if we want to delete some specific documents then we have to pass some filter.
-
 ```
 db.flights.deleteMany({})
 ```
-
-you can delete a full collection using drop() command.
+we could also use delete many and pass an empty pair of curly braces, this should delete all elements. but if we want to delete some specific documents then we have to pass some filter.
 
 ```
 db.flights.drop()
 ```
-
-deleting a database we can use dropDatabase() command.
+you can delete a full collection using drop() command.
 
 ```
 db.dropDatabase()
 ```
+deleting a database we can use dropDatabase() command.
 
 ## find() & the Cursor Object :
 
