@@ -226,6 +226,29 @@ $in for include
 $nin for not include 
 
 2. Logical
+
+```
+db.movie.find({$or: [{"rating.average": {$lt: 5}}, {"rating.average": {$gt: 9.3}}]})
+```
+So now I got two checks here and this showed me find all documents with a rating lower down 5 or greater than 9.3 but nothing in-between.
+
+```
+db.movie.find({$nor: [{"rating.average": {$lt: 5}}, {"rating.average": {$gt: 9.3}}]})
+```
+if I add nor here, it simply means return me all documents where neither of the two conditions is met.
+
+```
+db.movie.find({$and: [{"rating.average": {$gt: 9}}, {genres: "Drama"}]})
+db.movie.find({"rating.average": {$gt: 9}, genres: "Drama"}) // sort form of using multiple and condition
+```
+$and for need to match all filters.
+
+so why we need $and. because in some driver same key name cant be used multiple time like if want to search {genres: "Drama", genres: "Horro"} then its simple override the first key with only genres: "Horro". its means the second genres of horror will essentially just replace that key because in json documents, you can't have the same key more than once and if you do specify it more than once, the second one will just override the first one. so using same key name we need $and operator.
+
+so then you can simply wrap these queries into separate documents which you passed to that and array and now you will have an approach that will work fine.
+
+{$and: [{genres: "Drama"}, {genres: "Horror"}]
+
 3. Element
 4. Evaluation
 5. Array
