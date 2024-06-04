@@ -3,7 +3,7 @@
 - mongodb does not use json but bson on which stands for binary json for storing data in your database.
 - mongodb supports multiple storage engines but wired tiger is the default one is a high performant one is a really good storage engine, also we can switch the storage engine if we want to
 
-```sh
+```js
 show dbs
 ```
 
