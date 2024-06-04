@@ -185,6 +185,61 @@ db.flights.findOne({distance: {$gt: 500}})
 
 findOne is same like find but its only retun first matching element of the collection.
 
+```
+db.movie.find({"rating.average": {$gt: 7.0}})
+```
+we can filter embedded document using dot notation but you have to wrap the full path in string.
+
+```
+db.movie.find({genres: "Drama"})
+```
+this query check is "Drama" is present in genres array or not.
+
+```
+db.movie.find({genres: ["Drama"]})
+```
+but this query get data if genres have only "Drama". its menes its check exact equality not include this item.
+
+- Query Selectors:
+
+query selectors, basically the different operators like $gt which allow us to narrow down the set of documents we retrieve.
+
+1. Comparison:
+
+```
+db.movie.find({runtime: {$eq: 60}})
+db.movie.find({runtime: {$ne: 60}})
+db.movie.find({runtime: {$lt: 40}})
+db.movie.find({runtime: {$lte: 40}})
+db.movie.find({runtime: {$gt: 40}})
+db.movie.find({runtime: {$gte: 40}})
+db.movie.find({runtime: {$in: [30, 40]}})
+db.movie.find({runtime: {$nin: [30, 40]}})
+```
+$eq for equal to
+$ne for not equal
+$lt for less than
+$lte for less than equal to
+$gt for greater than
+$gte for greater than equal to
+$in for include
+$nin for not include 
+
+2. Logical
+3. Element
+4. Evaluation
+5. Array
+6. Comments
+7. Geospatial
+
+- Projection Operators:
+
+projection operators that allow us to transform or kind of change the data we get back to some extent, these are read related operators.
+
+1. $
+2. $elemMatch
+3. $meta
+4. $slice
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 3. Update
@@ -220,6 +275,10 @@ db.flights.replaceOne({_id: ObjectId('66348627b26c361323c8edb2')}, {delayed: fal
 ```
 
 replaceOne use to replace the existing document to new document. replaceOne dont need $set. it overwrote all the other key value pairs and that is the thing about replaceOne. replaceOne does accept this syntax with just an object and it will then take this object and basically replace the existing object with this new object, with this new document, it will only keep the ID.
+
+- Update Operators:
+
+which we'll cover in the update module allow you to modify and add additional data and this therefore does of course change the data. Inc, $inc is an example which will increment a field by one or any amount you specify.
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 4. Delete
@@ -275,12 +334,6 @@ db.passengers.find().forEach((item) => {printjson(item)})
 ```
 
 you can use forEach to loop through the collection
-
-## Operators: 
-
-1. Query Operators - query selectors, basically the different operators like $gt which allow us to narrow down the set of documents we retrieve.
-2. Projection Operators - projection operators that allow us to transform or kind of change the data we get back to some extent, these are read related operators.
-3. Update Operators - which we'll cover in the update module allow you to modify and add additional data and this therefore does of course change the data. Inc, $inc is an example which will increment a field by one or any amount you specify.
 
 ## Understanding Projection :
 
