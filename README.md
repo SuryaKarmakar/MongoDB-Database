@@ -250,6 +250,32 @@ so then you can simply wrap these queries into separate documents which you pass
 {$and: [{genres: "Drama"}, {genres: "Horror"}]
 
 3. Element
+
+```
+db.users.insertMany([{name: "surya", age: 24, phone: 9876543210}, {name: "rahul", age: null, phone: "9876543211"}])
+```
+lets insert some user info,
+
+```
+db.users.find({age: {$exists: true}})
+```
+$exists check the field are exists or not, its not check value of the fields. so here we can see both the user that have age field its dose not matter age have a value or not(null).
+
+```
+db.users.find({age: {$exists: true, $ne: null}})
+```
+we can combine more than one filer to check is age exists but return only those field have value or not equel to null. its quite helpful for making sure you really only have documents where there is a value in that field.
+
+```
+db.users.find({phone: {$type: "number"}})
+```
+$type this for checking data types. its only return maching data types data.
+
+```
+db.users.find({phone: {$type: ["number", "string"]}})
+```
+we can pass multiple types using array. 
+
 4. Evaluation
 5. Array
 6. Comments
