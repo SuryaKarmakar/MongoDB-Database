@@ -277,6 +277,12 @@ db.users.find({phone: {$type: ["number", "string"]}})
 we can pass multiple types using array. 
 
 4. Evaluation
+
+```
+db.movie.find({summary: {$regex: /musical/}})
+```
+$regex - regex stands for regular expression which is a way of searching text for certain patterns. a pattern is always surrounded by forward slashes and in-between you define your pattern.
+
 5. Array
 6. Comments
 7. Geospatial
