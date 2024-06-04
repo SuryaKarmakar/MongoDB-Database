@@ -152,6 +152,7 @@ In database systems, “atomicity” refers to the all-or-nothing nature of tran
 Success: If the operation succeeds, the document is saved in the database.
 Error: If an error occurs, the operation is rolled back, meaning no changes are made to the database.
 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
 2. Read
 
 - find(filter, options)
@@ -184,6 +185,8 @@ db.flights.findOne({distance: {$gt: 500}})
 
 findOne is same like find but its only retun first matching element of the collection.
 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
 3. Update
 
 - updateOne(filter, data, options)
@@ -218,6 +221,7 @@ db.flights.replaceOne({_id: ObjectId('66348627b26c361323c8edb2')}, {delayed: fal
 
 replaceOne use to replace the existing document to new document. replaceOne dont need $set. it overwrote all the other key value pairs and that is the thing about replaceOne. replaceOne does accept this syntax with just an object and it will then take this object and basically replace the existing object with this new object, with this new document, it will only keep the ID.
 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
 4. Delete
 
 - deleteOne(filter, options)
@@ -271,6 +275,12 @@ db.passengers.find().forEach((item) => {printjson(item)})
 ```
 
 you can use forEach to loop through the collection
+
+## Operators: 
+
+1. Query Operators - query selectors, basically the different operators like $gt which allow us to narrow down the set of documents we retrieve.
+2. Projection Operators - projection operators that allow us to transform or kind of change the data we get back to some extent, these are read related operators.
+3. Update Operators - which we'll cover in the update module allow you to modify and add additional data and this therefore does of course change the data. Inc, $inc is an example which will increment a field by one or any amount you specify.
 
 ## Understanding Projection :
 
