@@ -283,6 +283,24 @@ db.movie.find({summary: {$regex: /musical/}})
 ```
 $regex - regex stands for regular expression which is a way of searching text for certain patterns. a pattern is always surrounded by forward slashes and in-between you define your pattern.
 
+$expr - expression operator
+
+Expression is useful if you want to compare two fields inside of one document and then find all documents where this comparison returns a certain result.
+
+lets create a sales collection.
+
+```
+db.sales.insertMany([{volume: 100, target: 120}, {volume: 89, targat:80}, {volume: 200, targat  : 177}])
+```
+
+now we can check the values using expression. if we want to refer to the field names, we have to add a dollar sign at the beginning,
+this tells mongodb hey please look at the volume field and use the value of that in this expression.
+
+this return where volume is grater than target.
+```
+db.sales.find({$expr: {$gt: ["$volume", "$target"]}})
+```
+
 5. Array
 6. Comments
 7. Geospatial
