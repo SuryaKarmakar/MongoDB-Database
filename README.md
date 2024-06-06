@@ -302,6 +302,42 @@ db.sales.find({$expr: {$gt: ["$volume", "$target"]}})
 ```
 
 5. Array
+
+```
+hobbies: [ { title: 'sprots', frequency: 3 } ]
+hobbies: [ { title: 'cooking', frequency: 5 } ]
+```
+lets create a users collection with there hobbies, now let's say we want to find all users who have a hobby of sports. Now one problem we have is of course with that structure, where hobbies are embedded documents and not just strings so how to query a embedded documents.
+
+```
+db.users.find({"hobbies.title": "sprots"})
+```
+we have to use path and wrapping it in double quotation marks with dot notation same like assecing the nested object. always use path embedded approach("hobbies.title.n"), not only on directly embedded documents. 
+
+```
+db.users.insertOne({name: "gourav", age: 32, phone: 99876543213, hobbies: ["cooking", "game", "codeing"]})
+
+db.users.find({hobbies: {$size: 3}})
+```
+$size - this operater check the array element count. {hobbies: {$size: 3} this return only those document have 3 hobbies.
+
+lets create a movie collection with genres
+```
+db.movieGenres.insertMany([{name: "movie 1", genres: [ 'Drama', 'Action']},{name: "movie 1", genres: [ 'Action', 'Drama']}])
+```
+now i want to find movies that have a genre of exactly Drama and Action but I don't care about the order.
+
+```
+db.movieGenres.find({genres: [ 'Drama', 'Action']})
+```
+if i find like this then i will get only first document because this document is exactly equal to first document, the Drama being the first element and Action being the second element.
+
+But what if I don't care about the order? Well then, the all operator can help you.
+```
+db.movieGenres.find({genres: {$all : [ 'Drama', 'Action']}})
+```
+this will do is it will now search genre for these keywords and it will make sure that these items do have to exist in genre and this doesn't care about the order. And therefore now I find both documents even though the order is different within genre.
+
 6. Comments
 7. Geospatial
 
