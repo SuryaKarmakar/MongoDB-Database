@@ -799,3 +799,76 @@ So let's say we have customers who can buy products, so we're looking at orders,
 5. After creating cluster now you can connect with different types of drivers, compass, shell etc.
 6. After connecting cluster you can create, read, update, delete etc in your cloud database.
 
+## MongoDB & Security:
+
+So what is authentication and authorization? These are actually two concepts which are closely related. Authentication is all about identifying users in your database, authorization on the other hand is all about identifying what these users may then actually do in the database.
+
+1. Creating and Editing User -
+Users are created by a user with sufficient permissions with the createUser() command. we also have updateUsers(), Now keep in mind update user basically means that the administrator updates the user.
+
+createUser()
+```
+db.createUser({user: "surya", pwd: "1234", roles: ["userAdminAnyDatabase"]})
+```
+the first argument should be user, and the value here will be the username. the second argument is pwd its for password. Now you also need to add the roles and for that, you add a roles key which holds an array of roles.
+
+```
+db.auth("surya", "1234")
+```
+Now what you will need to do is you now need to authenticate and you can do this with the auth command. first argument for username and second argument for password.
+
+```
+mongosh -u surya -p 1234 --authenticationDatabase admin
+```
+this is another way of authenticating and the authentication database part here is really important.
+
+updateUsers()
+
+lets another user with only read access
+```
+db.createUser({user: "appdev", pwd: "1234appdev", roles: ["read"]})
+```
+
+```
+db.updateUser("appdev", {roles: ["readWrite"]})
+```
+Now the db update user command takes as a first argument the name of the user you want the update, and then the second argument is the document where you describe the change to the user.
+
+```
+db.updateUser("appdev", {roles: ["readWrite", {role: "read", db: "blog"}]})
+```
+we can give another database access to a user. now this user have read and write access on movies database and only read access on blog database.
+
+```
+db.getUser("appdev")
+```
+{
+  _id: 'movies.appdev',
+  userId: UUID('9013af45-ed80-42f6-8995-f457288a80dd'),
+  user: 'appdev',
+  db: 'movies',
+  roles: [ { role: 'readWrite', db: 'movies' }, { role: 'read', db: 'blog' } ],
+  mechanisms: [ 'SCRAM-SHA-1', 'SCRAM-SHA-256' ]
+}
+
+using getUser we can get user info like all giving roles, userId etc.
+
+```
+db.logout()
+```
+logout() for user logout form shell.
+
+2. Roles in mongoDB -
+
+a. Database User (read, readWrite) there we got two roles, a read and a readWrite role and these roles are pretty self-explanatory. You either got a role for users who only need to find data, so who can run all these queries, use the aggregation framework but will not be able to insert or update or delete data, you can do that if you gotreadWrite role.
+
+b. Database Admin (dbAdmin, userAdmin, dbOwner) 
+
+c. All Database Roles (readAnyDatabase, readWriteAnyDatabase, userAdminAnyDatabase, dbAdminAnyDatabase)
+
+d. Cluster Admin (clusterManager, clusterMonitor, hostManager, clusterAdmin)
+
+e. Backup/Restore (backup, restore)
+
+f. Superuser (dbOwner, userAdmin, userAdminAnyDatabase, root) if you assign the db owner or a user admin role to the admin database this will kind of be a special case because the admin database is a special database and these users are then able to create new users and also change their own role and that's why it's a super user. All these roles here basically allow a user to create new users and change users, so these users can create whatever they need and therefore these are very powerful roles. 
+The root role is basically the most powerful role, if you assign this to a user, this user can do everything.
