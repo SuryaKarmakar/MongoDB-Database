@@ -872,3 +872,44 @@ e. Backup/Restore (backup, restore)
 
 f. Superuser (dbOwner, userAdmin, userAdminAnyDatabase, root) if you assign the db owner or a user admin role to the admin database this will kind of be a special case because the admin database is a special database and these users are then able to create new users and also change their own role and that's why it's a super user. All these roles here basically allow a user to create new users and change users, so these users can create whatever they need and therefore these are very powerful roles. 
 The root role is basically the most powerful role, if you assign this to a user, this user can do everything.
+
+## Capped Collections:
+
+Capped collections are a special type of collection which you have to create explicitly where you limit the amount of data or documents that can be stored in there and old documents will simply be deleted when well this size is exceeded. so it's basically a store where oldest data is automatically deleted when new data comes in.
+
+```
+db.createCollection("capped", {capped: true, size: 10000, max: 3})
+```
+Here, the option you want to set is capped to true and this will turn this into a capped collection.
+
+Now by default, it will have a size limit of 4 bytes but you can set size to any other value and it will then automatically be turned into a multiple of 256 bytes.
+
+Max is optional and Max allows you to also define the amount of data that can be stored in there, measured in documents, so I could cap this to three documents at most.
+
+now insert atlest 3 data in there.
+```
+db.capped.insertMany([{name: "surya"}, {name: "rahul"}, {name: "gourav"}])
+```
+the important thing is for a capped collection, the order in which we retrieve the documents is always the order in which they were inserted.
+
+```
+  { _id: ObjectId('6662a917986dd42040679f78'), name: 'surya' },
+  { _id: ObjectId('6662a917986dd42040679f79'), name: 'rahul' },
+  { _id: ObjectId('6662a917986dd42040679f7a'), name: 'gourav' }
+```
+now if i try to insert another data it will clears the oldest document and then its add a new document.
+
+```
+ db.capped.find().sort({$natural: -1})
+```
+if you want to change the order and sort and reverse, there is a special key you can use and that is $natural, the natural order by which it is sorted and then for example use -1 and then it's sorted the other way around.
+
+```
+db.capped.insertOne({name: "john"})
+```
+
+```
+  { _id: ObjectId('6662a917986dd42040679f79'), name: 'rahul' },
+  { _id: ObjectId('6662a917986dd42040679f7a'), name: 'gourav' },
+  { _id: ObjectId('6662a9e6986dd42040679f7b'), name: 'john' }
+```
