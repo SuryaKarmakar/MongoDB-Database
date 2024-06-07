@@ -967,3 +967,24 @@ session.abortTransaction()
 to really commit these changes to the real database, we have to run session commitTransaction(), there also would be abortTransaction().
 
 after commiting transaction if you find user and post collection then you can see all data are deleted.
+
+## Nemeric Data:
+
+1. Integers (int32) - these are full numbers, so we have no decimal places here.
+```
+db.number.insertOne({name: "surya", age: NumberInt("24")})
+```
+{
+ age: 24
+}
+
+2. Longs (int64) - this also full numbers no decimal places.
+```
+db.number.insertOne({longInt: NumberLong("99999999999999999")})
+```
+{
+  longInt: Long('99999999999999999')
+}
+  
+3. Doubles (64bit) - this actually store numbers with decimal places like 1.66. that 64 bit double is the default value type mongodb uses if you pass a number with no extra information, no matter, by the way that is important, no matter if that number is theoretically an integer and has no decimal place or not, it will be stored as a 64 bit double when passing in the number through the shell. (Doubles is the default value of javascript and shell is based on Javascript)
+4. High Precision Doubles (128bit) - We also have a special type, high precision doubles in mongodb, these are also numbers with decimal places but there's one important difference to the normal doubles.
