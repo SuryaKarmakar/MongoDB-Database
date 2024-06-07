@@ -914,3 +914,56 @@ db.capped.insertOne({name: "john"})
   { _id: ObjectId('6662a9e6986dd42040679f7b'), name: 'john' }
 ```
 
+## Transactions:
+
+NOTE - Transactions work on cloud database. if you want to use Transactions on local db then you have to configure you local database otherwise its wont work.
+
+MongoDB transactions provide the means to execute multiple operations as a single logical unit of work. This ensures that either all operations within the transaction are completed successfully, or none of them take effect, maintaining data consistency and integrity.
+
+```
+db.user.insertOne({name: "surya"})
+
+db.post.insertOne({title: "this is my first post", creator: ObjectId('6662df1a986dd42040679f7c')})
+```
+Now for a transaction, we need a session. session basically means that all our requests are grouped together logically you could say. You create a session and you store it in a constant
+
+```
+const session = db.getMongo().startSession()
+```
+now I have a session stored in there. Now that session again basically is just an object that now allows me to group all requests that I send based on that session together, that is how you can think about it.
+
+```
+session.startTransaction()
+```
+Now you can use that session to start a transaction,
+
+```
+const userCol = session.getDatabase("transaction").user
+const postCol = session.getDatabase("transaction").post
+```
+So now we started the transaction, we can now get access to a collection and store them on a const variable.
+
+```
+userCol.deleteOne({_id: ObjectId('6662ec244a7b209007b07815')})
+{ acknowledged: true, deletedCount: 1 }
+```
+now we can write all the commands we want to execute against these collections here.
+
+after hititng enter i get the acknowledged but if I repeat db users find, you see the user still is in the database, so it hasn't been deleted yet, it was just saved as a to-do.
+
+```
+postCol.deleteOne({creator: ObjectId('6662ec244a7b209007b07815')})
+{ acknowledged: true, deletedCount: 1 }
+```
+now deleting the post that have same user id.
+
+```
+session.commitTransaction()
+
+or
+
+session.abortTransaction()
+```
+to really commit these changes to the real database, we have to run session commitTransaction(), there also would be abortTransaction().
+
+after commiting transaction if you find user and post collection then you can see all data are deleted.
