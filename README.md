@@ -987,4 +987,66 @@ db.number.insertOne({longInt: NumberLong("99999999999999999")})
 }
   
 3. Doubles (64bit) - this actually store numbers with decimal places like 1.66. that 64 bit double is the default value type mongodb uses if you pass a number with no extra information, no matter, by the way that is important, no matter if that number is theoretically an integer and has no decimal place or not, it will be stored as a 64 bit double when passing in the number through the shell. (Doubles is the default value of javascript and shell is based on Javascript)
+```
+db.number.insertOne({doubles: 19.99})
+```
+
 4. High Precision Doubles (128bit) - We also have a special type, high precision doubles in mongodb, these are also numbers with decimal places but there's one important difference to the normal doubles.
+```
+db.number.insertOne({a: NumberDecimal("0.3333"), b: NumberDecimal("0.1111")})
+```
+
+## Geospatial Data:
+
+```
+db.places.insertOne({name: "Rahara Bazar", location: {type: "Point", coordinates: [88.38697257116631, 22.723284221295522]}})
+```
+{ type: <GeoJSON type> , coordinates: <coordinates> }
+
+- a field named type that specifies the GeoJSON object type
+- a field named coordinates that specifies the object's coordinates. If specifying latitude and longitude coordinates, list the longitude first, and then latitude [<longitude>, <latitude> ] and you'll need to remember that to store it correctly in mongodb.
+
+ - location: { type: 'Point', coordinates: [ 88.3808289, 22.7205771 ] }
+ and this is called GeoJSON object.
+
+- find places that are near my current location using geo query.
+
+```
+db.places.find({location: {$near: {$geometry: {type: "Point", coordinates: [88.37977427176402, 22.723750899966575]}}}})
+``` 
+$near is one of the operators provided by mongodb for working with geospatial data.
+
+$near requires another document as a value and there, you can now define a geometry for which you want to check if it's near. The  $geometry again is a document and this now describes a geo json object.
+
+if you run this query then you will get a error and this said "unable to find index for $geoNear query", so first we need to create a index for geoNear query and the index value should be "2dsphere".
+
+```
+db.places.createIndex({location: "2dsphere"})
+```
+
+Well near doesn't make much sense unless we restrict it, so typically what you would do is you would not just pass a geometry to near as we're doing it here but you would also pass another argument and define a max and min distance. distance is simply a value in meters.
+
+```
+db.places.find({location: {$near: {$geometry: {type: "Point", coordinates: [88.37977427176402, 22.723750899966575]}, $maxDistance: 750, $minDistance: 10}}})
+```
+
+- Finding Places Inside a Certain Area:
+
+$geoWithin - This is an operator provided by mongodb that simply can help us find all elements within a certain shape, within a certain object, typically something like polygon. 
+
+Geowithin takes a document as a value and here we can add a geometry object which is just a geo json object.
+
+A polygon actually uses a bit more coordinates, to be precise we need the four corners, for a polygon we add a nested array, so an array in an array and in that array, we then again add more arrays where each array now describes one longitude latitude pair of the corners of our polygon.
+
+So essentially what we added here is p1, P2, p3, P4 to describe the four corners of our polygon. There is one important thing though, I need the p1 again at the end because a polygon has to end with a starting point so that it's treated as complete.
+
+```
+const p1 = [88.37977427176410, 22.723750899966550]
+const p2 = [88.3797742717620, 22.723750899966560]
+const p3 = [88.3797742717630, 22.723750899966570]
+const p4 = [88.37977427176340, 22.723750899966580]
+
+db.places.find({location: {$geoWithin: {$geometry: {type: "Polygon", coordinates: [[p1, p2, p3, p4, p1]]}}}})
+```
+
+
