@@ -1032,7 +1032,7 @@ db.places.find({location: {$near: {$geometry: {type: "Point", coordinates: [88.3
 
 - Finding Places Inside a Certain Area:
 
-$geoWithin - This is an operator provided by mongodb that simply can help us find all elements within a certain shape, within a certain object, typically something like polygon. 
+$geoWithin - This is an operator provided by mongodb that simply can help us find all elements within a certain shape, within a certain object, typically something like polygon. (geoWithin allowed us to find out which places are inside of an area)
 
 Geowithin takes a document as a value and here we can add a geometry object which is just a geo json object.
 
@@ -1046,7 +1046,49 @@ const p2 = [88.3797742717620, 22.723750899966560]
 const p3 = [88.3797742717630, 22.723750899966570]
 const p4 = [88.37977427176340, 22.723750899966580]
 
+db.places.insertOne({name: "Place 1 - inside Polygon", location: {type: "Point", coordinates: [88.38697257116631, 22.723284221295572]}})
+
+db.places.insertOne({name: "Place 2" - outside Polygon, location: {type: "Point", coordinates: [88.38697257116610, 22.723284221295510]}})
+
 db.places.find({location: {$geoWithin: {$geometry: {type: "Polygon", coordinates: [[p1, p2, p3, p4, p1]]}}}})
 ```
+this query returns places those are inside this Polygon.
+
+-  Finding Out If a User Is Inside a Specific Area:
+
+So let's first of all store a polygon which we used here to find if a location inside this polygon or not.
+```
+const p1 = [88.37977427176410, 22.723750899966550]
+const p2 = [88.3797742717620, 22.723750899966560]
+const p3 = [88.3797742717630, 22.723750899966570]
+const p4 = [88.37977427176340, 22.723750899966580]
+
+db.areas.insertOne({name: "golden gate park", area: {type: "Polygon", coordinates: [[p1, p2, p3, p4, p1]]}})
+```
+after storing our polygon next we have to add one index
+```
+db.areas.createIndex({area: "2dsphere"})
+```
+
+So with the index added, we can write our query and there we want to find out basically if the user is inside of this area, we can do this by checking for geoIntersects. $geoIntersects simply returns all areas that have a common point or a common area.
+
+```
+db.areas.find({area: {$geoIntersects: {$geometry: {type: "Point", coordinates: [88.38697257116611, 22.723284221295644]}}}})
+```
+
+-  Finding Places Within a Certain Radius:
+
+first enter some points then I want to find all elements in an unsorted order that are within a certain radius.
 
 
+$centerSphere - This is a helpful operator that allows you to quickly get a circle around a point. centerSphere takes an array as a value and that array has two elements. the first element is another array which holds your coordinates, again longitude and then latitude and The second element in this array is the radius then and now this radius needs to be translated manually from meters or miles to radians.
+
+```
+db.places.find({location: {$geoWithin: {$centerSphere: [[88.38697257116611, 22.723284221295644], 1 / 6378.1]}}})
+```
+
+1 km = 1 / 6378.1
+
+- NOTE:
+
+$near give us a sorted result but geoWithin return unsorted list.
