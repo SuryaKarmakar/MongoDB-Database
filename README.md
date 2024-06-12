@@ -398,7 +398,8 @@ we can use $slice to slice the array element. we can use either $slice(2) or $sl
 db.flights.updateOne({distance: 12000}, {$set: {marker:'delete'}})
 ```
 
-we first of all define a filter where we say which document should be updated. The second argument is what do you want to update, if its not there then it will create one. Now this might add a new field marker with the value delete to that first element. to update or insert new data we have to use a special keyword $set.$set is simply identified by mongodb when used in the update one operation to describe the changes you want to make.
+we first of all define a filter where we say which document should be updated. The second argument is what do you want to update, if its not there then it will create one. Now this might add a new field marker with the value delete to that first element. to update or insert new data we have to use a special keyword $set. 
+$set is simply identified by mongodb when used in the update one operation to describe the changes you want to make.
 
 - updateMany(filter, data, options)
 
