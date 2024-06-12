@@ -347,6 +347,39 @@ projection operators that allow us to transform or kind of change the data we ge
 
 1. $
 2. $elemMatch
+
+now update our hobbies collection.
+```
+hobbies: [
+  { title: 'cooking', frequency: 5 },
+  { title: 'cars', frequency: 2 }
+]
+
+ hobbies: [
+  { title: 'sports', frequency: 2 },
+  { title: 'yoga', frequency: 3 }
+]
+```
+Now let's say we want to find all users who have a hobby of "sports" and the frequency should be equal to "2".
+
+```
+ db.users.find({$and: [{"hobbies.title": "sports"}, {"hobbies.frequency": {$gte: 2}}]})
+```
+this returns both surya and rahul because both have hobbies = sports and frequency = gte 2
+
+```
+ db.users.find({$and: [{"hobbies.title": "sports"}, {"hobbies.frequency": {$gte: 3}}]})
+```
+now I'm looking for a frequency greater than or equal to 3, i find surya its ok beasue his frequency = 3, but what's that? I still find rahul even though for his sports hobby, the frequency is 2.
+
+so what's going wrong here?
+The thing is with this query, we're basically saying find me all documents where in hobbies, there is a document at least one document with the title sports and a document with the frequency greater than or equal to three, it does not have to be the same document, that is our issue here and indeed for rahul, yoga has a frequency greater than or equal to three.
+
+```
+db.users.find({hobbies: {$elemMatch: {title: "sports", frequency: {$gte: 3}}}})
+```
+Now of course it's not that uncommon that you want to ensure that one and the same element should match your conditions and for that, you have the elemMatch operator. we essentially you could say describe how a single document should look like to match our query and if it finds at least one document in the hobbies array that has a title sports and a frequency greater than or equal than three, it will include the overall document that contains that hobbies array in the result set.
+
 3. $meta
 4. $slice
 
