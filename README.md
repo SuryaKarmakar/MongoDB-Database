@@ -345,6 +345,11 @@ this will do is it will now search genre for these keywords and it will make sur
 
 projection operators that allow us to transform or kind of change the data we get back to some extent, these are read related operators.
 
+- project embedded document:
+```
+db.movie.find({}, {"schedule.time": 1})
+```
+
 1. $
 2. $elemMatch
 
@@ -382,6 +387,7 @@ Now of course it's not that uncommon that you want to ensure that one and the sa
 
 3. $meta
 4. $slice
+we can use $slice to slice the array element. we can use either $slice(2) or $slice[1, 2] like this [how many to skip, how many to show]
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 3. Update
@@ -495,6 +501,44 @@ you can use forEach to loop through the collection
 ```
 
 - the \_id is also always included, you have to explicitly exclude it if you don't want to add it. Now you exclude something by simply specifying its name and then using 0 instead of 1.
+
+```
+db.movie.find().count()
+```
+count simply has a look at the cursor and determines how many elements can I get from the cursor.
+
+```
+const dbCursor = db.users.find()
+dbCursor.next()
+dbCursor.next()
+```
+next gives me the next document.
+
+```
+dbCursor.hasNext()
+```
+hasNext() indicates there is no data to be fetched.
+
+```
+db.movie.find().sort({"rating.average": 1})
+```
+Now we can sort by adding .sort if we use pretty, before pretty but always after find, now sort takes a document where you describe how to sort.
+now the value you specify here describes the direction in which you sort, 1 means ascending, -1 means descending.
+
+```
+db.movie.find().sort({"rating.average": 1, runtime: -1})
+```
+So you can combine multiple, as many as you want sorting criteria.
+
+```
+db.movie.find().skip(100)
+```
+skip() method use for skiping document/results.
+
+```
+db.movie.find().limit(2)
+```
+so limit also allows us to retrieve a certain amount of documents but only the amount of documents we specify.
 
 ## Embedded Documents & Arrays :
 
