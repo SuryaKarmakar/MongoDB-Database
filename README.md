@@ -429,6 +429,39 @@ replaceOne use to replace the existing document to new document. replaceOne dont
 
 which we'll cover in the update module allow you to modify and add additional data and this therefore does of course change the data. Inc, $inc is an example which will increment a field by one or any amount you specify.
 
+$inc operator use for increment and decrement the value. we can use $icn like this.
+```
+db.users.updateOne({ _id: ObjectId('665ef8fc93092d666d0d56f8')}, {$inc: {age: 1}})
+db.users.updateOne({ _id: ObjectId('665ef8fc93092d666d0d56f8')}, {$inc: {age: -1}})
+```
+by the way you can also combine $inc with $set, you need to pass first argument as $inc then next or second argument for $set like this.
+```
+db.users.updateOne({ _id: ObjectId('665ef8fc93092d666d0d56f8')}, {$inc: {age: 1}, $set: {isSports: true}})
+```
+
+$min - to check minimum value.
+
+$max - to check maximum value.
+
+$mul - use for multiply.
+
+$unset - unset allows you to unset or remove a field or key value pair. its simplely delete that field.
+```
+db.users.updateOne({ _id: ObjectId('665ef8fc93092d666d0d56f8')}, {$unset: {phone: ""}})
+```
+the syntax is such that you add a document as a value and then here I want to unset phone and the value you specify here is totally up to you. Typically you use an empty string but this will basically be ignored, the important part is the field name.
+
+$rename - rename operator helps us to rename any field. The rename operator takes a document as a value where you then specify the field name you want to rename. the new field name should be in string.
+```
+db.users.updateMany({}, {$rename: {age: "newAge"}})
+```
+
+upsert - simply is a combination of the word update and insert and means that if the document does not exist, it will be created. And you can do that by passing a third argument to updateOne or updateMany method.
+```
+db.users.updateOne({name: "john"}, {$set: {age: 29, hobbies: [{title: "gaming", frequency: 3}, {title: "reading", frequency: 5}]}}, {upsert: true})
+```
+now if john is not present on our collection then it will add or insert that.
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 4. Delete
 
