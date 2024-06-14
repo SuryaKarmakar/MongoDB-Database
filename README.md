@@ -485,6 +485,42 @@ db.users.updateMany({hobbies: {$elemMatch: {title: "new_sports", frequency: 1}}}
 ```
 { title: 'new_sports', frequency: 1, newFrequency: 4 }
 
+when you have a query where you do select a specific element in an array and you then want to update exactly that element in your set operation. And just to make it really clear, inside of set, you could of course have updated totally other fields as well.
+
+NOTE - "hobbies.$" this will update only first matching element of the array, if you want to update all matching element on the array then you have to use like this "hobbies.$[]" or "hobbies.$[].newFrequency"
+
+"hobbies.$" -> giving first matching element.
+"hobbies.$[]" -> giving all matching element.
+
+- Adding Elements to Arrays:
+
+$push - its push a new element onto the array. i can do that by now specifying a document where I describe first of all the array to which I want to push, hobbies and then the element I want to push.
+```
+db.users.updateOne({_id: ObjectId('665ef8fc93092d666d0d56f9')}, {$push: {hobbies: {title: "gaming", frequency: 5}}})
+```
+
+Push can also be used with more than one document. using $each which then is an array of multiple documents that should be added.
+```
+db.users.updateOne({_id: ObjectId('665ef8fc93092d666d0d56f9')}, {$push: {hobbies: {$each: [{}, {}]}}})
+```
+
+before pushing the element into the array we can sort the element using $sort.
+```
+db.users.updateOne({_id: ObjectId('665ef8fc93092d666d0d56f9')}, {$push: {hobbies: {$each: [{}, {}], $sort: {frequency: 1}}}})
+```
+
+- Removing Elements from Arrays:
+```
+db.users.updateOne({_id: ObjectId('665ef8fc93092d666d0d56f9')}, {$pull: {hobbies: {title: "sports"}}})
+```
+
+$pull are using for remove some spcific element
+
+$pop are using to remove first or last element of the array. 1 = last element and -1 = first element.
+```
+db.users.updateOne({_id: ObjectId('665ef8fc93092d666d0d56f9')}, {$pop: {hobbies: 1}})
+```
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 4. Delete
 
