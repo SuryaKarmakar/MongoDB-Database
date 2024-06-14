@@ -521,6 +521,11 @@ $pop are using to remove first or last element of the array. 1 = last element an
 db.users.updateOne({_id: ObjectId('665ef8fc93092d666d0d56f9')}, {$pop: {hobbies: 1}})
 ```
 
+$addToSet - this operator also can push single item on the array. The question is what is the difference to push?. Previously with push, we were able to push duplicate values. The difference is that addToSet adds unique values only, so if you try to add a value that's already part of the array, it will not be added again. 
+```
+db.users.updateOne({_id: ObjectId('665ef8fc93092d666d0d56f9')}, {$addToSet: {hobbies: {title: "gaming", frequency: 5}}})
+```
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 4. Delete
 
