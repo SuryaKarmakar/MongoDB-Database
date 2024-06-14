@@ -462,6 +462,29 @@ db.users.updateOne({name: "john"}, {$set: {age: 29, hobbies: [{title: "gaming", 
 ```
 now if john is not present on our collection then it will add or insert that.
 
+- Updating Matched Array Elements:
+
+Let's say we want to update all documents whoever matches, all documents where the person has a hobby of sports with a frequency greater or equal to 3.
+```
+db.users.find({hobbies: {$elemMatch: {title: "sports", frequency: {$gte: 3}}}})
+```
+
+I want to change something in exactly that element which I found in the array. {title: "sports", frequency: {$gte: 3}
+
+I don't want to assign a brand new value to hobbies, I only want to update the element in hobbies which matched my condition here. And to do that, we can use a different syntax, I can enclose it in quotation marks and say hobbies.$ and this will automatically refer to the element matched in our filter, so in our query and then here, I can define the new value.
+```
+db.users.updateMany({hobbies: {$elemMatch: {title: "sports", frequency: {$gte: 3}}}}, {$set: {"hobbies.$": {title: "new_sports", frequency: 1}}})
+```
+{ title: 'new_sports', frequency: 1 }
+
+"hobbies.$" -> this will override our old value.
+
+if I don't want to override the entire document, what i want to add a new field then we can define new field name like this "hobbies.$.newFrequency".
+```
+db.users.updateMany({hobbies: {$elemMatch: {title: "new_sports", frequency: 1}}}, {$set: {"hobbies.$.newFrequency": 4}})
+```
+{ title: 'new_sports', frequency: 1, newFrequency: 4 }
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 4. Delete
 
