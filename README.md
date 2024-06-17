@@ -1267,3 +1267,18 @@ db.places.find({location: {$geoWithin: {$centerSphere: [[88.38697257116611, 22.7
 - NOTE:
 
 $near give us a sorted result but geoWithin return unsorted list.
+
+## Aggregation Framework:
+
+- what is the aggregation framework?
+
+Aggregation in MongoDB is a powerful feature that allows for complex data transformations and computations on collections of documents. It enables users to group, filter, and manipulate data to produce summarized results.
+
+It is typically performed using the MongoDB Aggregation Pipeline which is a framework for data aggregation modeled on the concept of data processing pipelines. 
+
+You have your collection and now the aggregation framework is all about building a pipeline of steps that runs on the data that is retrieved from your collection and then gives you the output in the form you needed and these steps are sometimes related to what you know from find, match.
+
+
+
+
+
