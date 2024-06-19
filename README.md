@@ -1278,7 +1278,14 @@ It is typically performed using the MongoDB Aggregation Pipeline which is a fram
 
 You have your collection and now the aggregation framework is all about building a pipeline of steps that runs on the data that is retrieved from your collection and then gives you the output in the form you needed and these steps are sometimes related to what you know from find, match.
 
+- Using aggregate():
 
+The aggregate method takes an array and it takes an array because we define a series of steps that should be run on our data.
 
+The first step will receive the entire data right from the collection you could say and the next step can then do something with the data returned by the first step and so on.
 
-
+$match - match essentially is just a filtering step, so you define some criteria on which you want to filter your data in that persons collection.
+so all the things you learn there on how you can query documents, how you can match for greater than values and so on applies here too.
+```
+db.person.aggregate([ { $match: { gender: "female" } }])
+```
