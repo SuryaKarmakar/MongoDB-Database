@@ -1284,8 +1284,48 @@ The aggregate method takes an array and it takes an array because we define a se
 
 The first step will receive the entire data right from the collection you could say and the next step can then do something with the data returned by the first step and so on.
 
-$match - match essentially is just a filtering step, so you define some criteria on which you want to filter your data in that persons collection.
+$match stage - match essentially is just a filtering step, so you define some criteria on which you want to filter your data in that persons collection.
 so all the things you learn there on how you can query documents, how you can match for greater than values and so on applies here too.
+
 ```
 db.person.aggregate([ { $match: { gender: "female" } }])
 ```
+$group stage - the group stage allows you to well group your data by a certain field or by multiple fields.
+
+```
+db.person.aggregate([
+{$match: {gender: "female" }},
+{$group: {_id: {state: "$location.state"}, totalPerson: {$sum: 1}}}
+])
+
+db.person.aggregate([
+{ $match: { gender: "female" } },
+{ $group: { _id: "$location.state", totalPerson: { $sum: 1 } } }] )
+```
+
+1. the first one always is _id. Now _id defines by which fields you want to group. the value for _id will be a document.
+the group stage, you often see that syntax because that will be interpreted in a special way and it will basically allow you to define multiple fields by which you want to group. in this case i want to group by location state.
+
+2. we will use the sum here by using $sum and then a value you want to add for every document that is grouped together.
+So if we have 3 people from the same location state, sum would be incremented by 1 times 3.
+
+3. It's also important to understand that group does accumulate data, now that simply means that you might have multiple documents with the same state and group will only output one, so three documents with the same state will be merged into one because you are aggregating, you're building a sum in this case.
+
+$sort - the sort stage also takes a document as an input to define how the sorting should happen and you can simply sort as you also sorted before.
+
+NOTE - each pipeline stage passes some output data to the next stage and that output data is the only data that next stage has.
+
+So this sort stage does not have access to the original data as we fetched it from the collection, it only has access to the output data of our group stage. so we can use totalPerson to sort.
+
+```
+db.person.aggregate([
+{ $match: { gender: "female" } },
+{ $group: { _id: "$location.state", totalPerson: { $sum: 1 } } },
+{ $sort: {totalPerson: 1} }
+])
+```
+1 = low to high
+-1 = hign to low
+
+
+
