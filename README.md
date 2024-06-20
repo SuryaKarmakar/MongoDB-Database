@@ -1361,7 +1361,7 @@ $project: {
 ```
 $substrCP - substrCP operator which returns the substring of well a string, so a part of a string. SubstrCP takes an array, the first argument is the string, The second argument is the starting character of your substring, this will be zero because strings are is zero indexed, hen it asks you for how many characters should be included in the substring and that should be one here. 
 
-substrCP: ["string", <start index>, <total char>]
+substrCP: ["string", start index, total char]
 
 ```
 db.person.aggregate([{
