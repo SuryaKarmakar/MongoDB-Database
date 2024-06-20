@@ -1327,5 +1327,61 @@ db.person.aggregate([
 1 = low to high
 -1 = hign to low
 
+$project - the project state works in the same way as the projection works in the find method, but its a more powerfull and customizeble.
 
+```
+db.person.aggregate([
+{$project: {_id: 0, gender: 1}}
+])
+```
+
+we can project our filed same as projection method. but here We can add new fields with custom value. let's say the name should be one field instead of this embedded document and this is something we can easily do with this project stage.
+
+$concat allows you concatenate two strings and you simply pass an array here which contains the two strings.
+```
+db.person.aggregate([
+{$project: {_id: 0, gender: 1, fullName: {$concat: ["$name.first", " ", "$name.last"]}}}
+])
+```
+
+$toUpper - its take a string and return a upper case string.
+```
+db.person.aggregate([{
+$project: {
+  _id: 0,
+  fullName: {
+    $concat: [
+      {$toUpper: "$name.first"},
+      " ",
+      {$toUpper: "$name.last"}
+    ]
+  }
+}
+}])
+```
+$substrCP - substrCP operator which returns the substring of well a string, so a part of a string. SubstrCP takes an array, the first argument is the string, The second argument is the starting character of your substring, this will be zero because strings are is zero indexed, hen it asks you for how many characters should be included in the substring and that should be one here. 
+
+substrCP: ["string", <start index>, <total char>]
+
+```
+db.person.aggregate([{
+$project: {
+  _id: 0,
+  fullName: {
+    $concat: [
+      {$toUpper: "$name.first"},
+      " ",
+      {$toUpper: "$name.last"}
+    ]
+  },
+  firstCharOfName: {
+    $concat: [
+      {$toUpper: {$substrCP: ["$name.first", 0, 1]}},
+      " ",
+     {$toUpper: {$substrCP: ["$name.last", 0, 1]}}
+    ]
+  }
+}
+}])
+```
 
