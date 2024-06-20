@@ -1385,3 +1385,60 @@ $project: {
 }])
 ```
 
+$convert - this convert operator are use for converting the data type.
+1. the first field is input and there you simply define which value should be converted.
+2. The second field and this is the last field that you need to pass is the to field, the to field defines the type you want to convert to.
+3. You also can define on error and on null values, so default values that should be returned in case the transformation fails.
+
+NOTE - you can have the same stage multiple times.
+
+```
+db.person.aggregate(
+[
+  {
+    $project: {
+      _id: 0,
+      fullName: {
+        $concat: [
+          { $toUpper: "$name.first" },
+          " ",
+          { $toUpper: "$name.last" }
+        ]
+      },
+      location: 1
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      test: "abcd",
+      fullName: "$fullName",
+      location: {
+        type: "Point",
+        coordinates: [
+          {
+            $convert: {
+              input:
+                "$location.coordinates.longitude",
+              to: "double",
+              onError: 0.0,
+              onNull: 0.0
+            }
+          },
+          {
+            $convert: {
+              input:
+                "$location.coordinates.latitude",
+              to: "double",
+              onError: 0.0,
+              onNull: 0.0
+            }
+          }
+        ]
+      }
+    }
+  }
+]
+)
+```
+
