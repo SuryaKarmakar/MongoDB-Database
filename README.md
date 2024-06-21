@@ -1393,26 +1393,23 @@ $convert - this convert operator are use for converting the data type.
 NOTE - you can have the same stage multiple times.
 
 ```
-db.person.aggregate(
-[
+db.person.aggregate([
   {
     $project: {
       _id: 0,
+      location: 1,
       fullName: {
         $concat: [
           { $toUpper: "$name.first" },
           " ",
           { $toUpper: "$name.last" }
         ]
-      },
-      location: 1
+      }
     }
   },
   {
     $project: {
-      _id: 0,
-      test: "abcd",
-      fullName: "$fullName",
+      fullName: 1,
       location: {
         type: "Point",
         coordinates: [
@@ -1438,7 +1435,6 @@ db.person.aggregate(
       }
     }
   }
-]
-)
+])
 ```
 
