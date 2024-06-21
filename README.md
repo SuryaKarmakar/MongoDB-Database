@@ -1,7 +1,7 @@
 # MongoDB
 
 - mongodb does not use json but bson on which stands for binary json for storing data in your database.
-- mongodb supports multiple storage engines but wired tiger is the default one is a high performant one is a really good storage engine, also we can switch the storage engine if we want to
+- mongodb supports multiple storage engines but wired tiger is the default one is a high performant one is a really good storage engine, also we can switch the storage engine if we want to.
 
 ```
 show dbs
@@ -1437,4 +1437,85 @@ db.person.aggregate([
   }
 ])
 ```
+
+NOTE - we can use specific convert operator like $toDate, $toString etc
+
+```
+db.person.aggregate([{
+$project: {
+  _id: 0,
+  dob: {$convert: {input: "$dob.date", to: "date"}}
+}
+}])
+
+or
+
+db.person.aggregate([{
+$project: {
+  _id: 0,
+  dob: {$toDate: "$dob.date"}
+}
+}])
+```
+
+$isoWeekYear - this operator basically retrieves the year out of a date.
+
+```
+db.person.aggregate([{
+$project: {
+  _id: 0,
+  dobYear: {$isoWeekYear: {$toDate: "$dob.date"}}
+}
+}])
+```
+
+$limit - the limit stage is pretty straightforward, we just define how many entries we want to see.
+
+```
+db.person.aggregate([
+{
+  $project: {
+    _id: 0,
+    dob: {$toDate: "$dob.date"}
+  }
+},
+{$sort: {dob: 1}},
+{$limit: 10}
+])
+```
+
+$skip - skip stage which we have to add prior to limit, so now we skip the first 10 records and show the next 10.
+
+```
+db.person.aggregate([
+{
+  $project: {
+    _id: 0,
+    dob: {$toDate: "$dob.date"}
+  }
+},
+{$sort: {dob: 1}},
+{$skip: 10},
+{$limit: 10}
+])
+```
+
+NOTE - find method ordering dose't matter, but here ordering does matter because your pipeline is processed step by step.
+
+- Writing Pipeline Results Into a New Collection:
+
+the $out stage for output and this will take the result of your operation and write it into a collection, either a new one which is created on the fly or an existing one. 
+
+```
+db.person.aggregate([
+{
+  $project: {
+    _id: 0,
+    dobYear: {$isoWeekYear: {$toDate: "$dob.date"}}
+  }
+},
+{$out: "newCollection"}
+])
+```
+
 
