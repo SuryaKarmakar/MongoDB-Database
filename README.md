@@ -1566,5 +1566,33 @@ we want to combine the hobby arrays, so that we know which hobbies exist for thi
 push operator, the push operator allows you to push a new element into the all hobbies array for every incoming document.
 
 
+$unwind - the unwind stage is always a great stage when you have an array of which you want to pull out the elements.
+in prevouse query we push array inside arrary but we want to push all grouped element in the same array, so unwind stage can helps us to do this.
+
+```
+db.friend.aggregate([
+{ $unwind: "$hobbies"},
+{ $group: {_id: "$age", allHobbies: {$push: "$hobbies"}} }
+])
+```
+output ->
+[
+  { _id: 29, allHobbies: [ 'Sports', 'Cooking', 'Cooking', 'Skiing' ] },
+  { _id: 30, allHobbies: [ 'Eating', 'Data Analytics' ] }
+]
+
+Now we have another problem. duplicate values are pushed, to solve this issue we can use an alternative to push. Instead of push, you can use addToSet, addToSet does almost the same but avoids duplicate values. If it finds that an entry already exists, it just doesn't push the new value.
+
+```
+db.friend.aggregate([
+{ $unwind: "$hobbies"},
+{ $group: {_id: "$age", allHobbies: {$addToSet: "$hobbies"}} }
+])
+```
+output 
+[
+  { _id: 29, allHobbies: [ 'Cooking', 'Skiing', 'Sports' ] },
+  { _id: 30, allHobbies: [ 'Data Analytics', 'Eating' ] }
+]
 
 
