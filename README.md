@@ -1595,4 +1595,46 @@ output
   { _id: 30, allHobbies: [ 'Data Analytics', 'Eating' ] }
 ]
 
+- Using Projection with Arrays:
 
+now. Let's say you only want to output the first value of that array instead of all the exam scores.
+
+$slice - slice operator allows you to get back the slice of an array, It takes an array itself, the first value is the array you want to slice and the second argument for the amount of elements you want to get out of the array seen from the start.
+
+```
+db.friend.aggregate([
+{ $project: {_id: 0, examScores: {$slice: ["$examScores", 1]}}},
+])
+```
+this get only first elemnt for the array. but some time you want to last one or last 2 then you have to use -1 or -2.
+
+```
+db.friend.aggregate([
+{ $project: {_id: 0, examScores: {$slice: ["$examScores", -1]}}},
+])
+```
+
+$size - the size operator which calculates the length of an array.
+```
+db.friend.aggregate([
+{ $project: {_id: 0, lenghtExamScores: {$size: "$examScores"}}}
+])
+```
+
+$filter - filter allows you to filter arrays in documents inside of the projection phase.
+
+$geoNear stage - the most important things to remember here is that it has to be the first stage.
+
+```
+db.person.aggregate([
+{ $geoNear: {
+  near:{
+    type: "Point",
+    coordinates: [-29.8113, -31.0208]
+  },
+  maxDistance: 1000000,
+  query: {age: {$gt: 30}},
+  distanceField: "distacnce"
+}}
+])
+```
