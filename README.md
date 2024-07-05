@@ -1518,4 +1518,53 @@ db.person.aggregate([
 ])
 ```
 
+- $push ($group accumulators)
+
+1. grouping arrays 
+```
+db.friend.insertMany([
+  {
+    "name": "Max",
+    "hobbies": ["Sports", "Cooking"],
+    "age": 29,
+    "examScores": [
+      { "difficulty": 4, "score": 57.9 },
+      { "difficulty": 6, "score": 62.1 },
+      { "difficulty": 3, "score": 88.5 }
+    ]
+  },
+  {
+    "name": "Manu",
+    "hobbies": ["Eating", "Data Analytics"],
+    "age": 30,
+    "examScores": [
+      { "difficulty": 7, "score": 52.1 },
+      { "difficulty": 2, "score": 74.3 },
+      { "difficulty": 5, "score": 53.1 }
+    ]
+  },
+  {
+    "name": "Maria",
+    "hobbies": ["Cooking", "Skiing"],
+    "age": 29,
+    "examScores": [
+      { "difficulty": 3, "score": 75.1 },
+      { "difficulty": 8, "score": 44.2 },
+      { "difficulty": 6, "score": 61.5 }
+    ]
+  }
+])
+```
+
+```
+db.friend.aggregate([
+{ $group: {_id: "$age", allHobbies: {$push: "$hobbies"}} }
+])
+```
+
+we want to combine the hobby arrays, so that we know which hobbies exist for this age group and for that age group.
+push operator, the push operator allows you to push a new element into the all hobbies array for every incoming document.
+
+
+
 
