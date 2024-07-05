@@ -1638,3 +1638,11 @@ db.person.aggregate([
 }}
 ])
 ```
+
+$lookup - lookup is essentially a helpful tool that allows you to fetch two related documents merged together in one document.
+
+```
+db.books.aggregate([
+{ $lookup: {from: "authors", localField: "author", foreignField: "_id"}}
+])
+```
