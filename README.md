@@ -83,16 +83,17 @@ db.flights.insert([{"departureAirport": "MUC", "arrivalAirport": "SFO", "aircraf
 db.flights.insert({"departureAirport": "MUC", arrivalAirport: "SFO", aircraft: "Airbus A380", distance: 12000, intercontinental: true})
 ```
 
-the insert method can still be used, it's just not recommended. it can be insert both one and manny documents. but this command not return the genarated _id, so if you're building an application where you insert some data into the database, then often you want to get that _id back of that insert operation and immediately use it in your app, then you have to find that _id manually. So this is also another reason why insert is not that great.
+the insert method can still be used, it's just not recommended. it can be insert both one and manny documents. but this command not return the genarated \_id, so if you're building an application where you insert some data into the database, then often you want to get that \_id back of that insert operation and immediately use it in your app, then you have to find that \_id manually. So this is also another reason why insert is not that great.
 
 - Ordered Inserts:
 
-first lets insert some hobbies data with our custom _ids. so now i got these three entries in there and i got my own _id.
+first lets insert some hobbies data with our custom \_ids. so now i got these three entries in there and i got my own \_id.
+
 ```
 db.hobbies.insertMany([{_id: "sports", name: "Sports"}, {_id: "cooking", name: "Cooking"}, {_id: "cars", name: "Cars"}])
 ```
 
-Now let's say I repeat that operation, so I add more hobbies. but this time leave cooking as it is. so I try to enter data with an _id that already exists in the database. What happens if I now hit enter? Well if I do this, I get an error and its says 'E11000 duplicate key error collection: test.hobbies index: _id_ dup key: { _id: "cooking" }'
+Now let's say I repeat that operation, so I add more hobbies. but this time leave cooking as it is. so I try to enter data with an _id that already exists in the database. What happens if I now hit enter? Well if I do this, I get an error and its says 'E11000 duplicate key error collection: test.hobbies index: \_id_ dup key: { \_id: "cooking" }'
 
 ```
 db.hobbies.insertMany([{_id: "yoga", name: "Yoga"}, {_id: "cooking", name: "Cooking"}, {_id: "hiking", name: "Hiking"}])
@@ -118,6 +119,7 @@ Now if I hit enter, I still get that error but this time execution is not stopin
 ```
  db.hobbies.insertMany([{_id: "yoga", name: "Yoga"}, {_id: "cooking", name: "Cooking"}, {_id: "hiking", name: "Hiking"}], {ordered: false})
 ```
+
 Now you can see hiking is added successful.
 
 ```
@@ -139,6 +141,7 @@ Write concern describes the level of acknowledgment requested from MongoDB for w
 { w: <value>, j: <boolean>, wtimeout: <number> }
 db.persons.insertOne({name: "Surya", age: 24}, {writeConcern: {w: 1, j: true, wtimeout: 1}})
 ```
+
 a. the w option to request acknowledgment that the write operation has propagated to a specified number of mongod instances or to mongod instances with specified tags.
 b. the j option to request acknowledgment that the write operation has been written to the on-disk journal.
 c. the wtimeout option to specify a time limit to prevent write operations from blocking indefinitely.
@@ -152,7 +155,8 @@ In database systems, “atomicity” refers to the all-or-nothing nature of tran
 Success: If the operation succeeds, the document is saved in the database.
 Error: If an error occurs, the operation is rolled back, meaning no changes are made to the database.
 
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+---
+
 2. Read
 
 - find(filter, options)
@@ -188,16 +192,19 @@ findOne is same like find but its only retun first matching element of the colle
 ```
 db.movie.find({"rating.average": {$gt: 7.0}})
 ```
+
 we can filter embedded document using dot notation but you have to wrap the full path in string.
 
 ```
 db.movie.find({genres: "Drama"})
 ```
+
 this query check is "Drama" is present in genres array or not.
 
 ```
 db.movie.find({genres: ["Drama"]})
 ```
+
 but this query get data if genres have only "Drama". its menes its check exact equality not include this item.
 
 - Query Selectors:
@@ -216,6 +223,7 @@ db.movie.find({runtime: {$gte: 40}})
 db.movie.find({runtime: {$in: [30, 40]}})
 db.movie.find({runtime: {$nin: [30, 40]}})
 ```
+
 $eq for equal to
 $ne for not equal
 $lt for less than
@@ -223,24 +231,27 @@ $lte for less than equal to
 $gt for greater than
 $gte for greater than equal to
 $in for include
-$nin for not include 
+$nin for not include
 
 2. Logical
 
 ```
 db.movie.find({$or: [{"rating.average": {$lt: 5}}, {"rating.average": {$gt: 9.3}}]})
 ```
+
 So now I got two checks here and this showed me find all documents with a rating lower down 5 or greater than 9.3 but nothing in-between.
 
 ```
 db.movie.find({$nor: [{"rating.average": {$lt: 5}}, {"rating.average": {$gt: 9.3}}]})
 ```
+
 if I add nor here, it simply means return me all documents where neither of the two conditions is met.
 
 ```
 db.movie.find({$and: [{"rating.average": {$gt: 9}}, {genres: "Drama"}]})
 db.movie.find({"rating.average": {$gt: 9}, genres: "Drama"}) // sort form of using multiple and condition
 ```
+
 $and for need to match all filters.
 
 so why we need $and. because in some driver same key name cant be used multiple time like if want to search {genres: "Drama", genres: "Horro"} then its simple override the first key with only genres: "Horro". its means the second genres of horror will essentially just replace that key because in json documents, you can't have the same key more than once and if you do specify it more than once, the second one will just override the first one. so using same key name we need $and operator.
@@ -254,33 +265,39 @@ so then you can simply wrap these queries into separate documents which you pass
 ```
 db.users.insertMany([{name: "surya", age: 24, phone: 9876543210}, {name: "rahul", age: null, phone: "9876543211"}])
 ```
+
 lets insert some user info,
 
 ```
 db.users.find({age: {$exists: true}})
 ```
+
 $exists check the field are exists or not, its not check value of the fields. so here we can see both the user that have age field its dose not matter age have a value or not(null).
 
 ```
 db.users.find({age: {$exists: true, $ne: null}})
 ```
+
 we can combine more than one filer to check is age exists but return only those field have value or not equel to null. its quite helpful for making sure you really only have documents where there is a value in that field.
 
 ```
 db.users.find({phone: {$type: "number"}})
 ```
+
 $type this for checking data types. its only return maching data types data.
 
 ```
 db.users.find({phone: {$type: ["number", "string"]}})
 ```
-we can pass multiple types using array. 
+
+we can pass multiple types using array.
 
 4. Evaluation
 
 ```
 db.movie.find({summary: {$regex: /musical/}})
 ```
+
 $regex - regex stands for regular expression which is a way of searching text for certain patterns. a pattern is always surrounded by forward slashes and in-between you define your pattern.
 
 $expr - expression operator
@@ -297,6 +314,7 @@ now we can check the values using expression. if we want to refer to the field n
 this tells mongodb hey please look at the volume field and use the value of that in this expression.
 
 this return where volume is grater than target.
+
 ```
 db.sales.find({$expr: {$gt: ["$volume", "$target"]}})
 ```
@@ -307,35 +325,43 @@ db.sales.find({$expr: {$gt: ["$volume", "$target"]}})
 hobbies: [ { title: 'sprots', frequency: 3 } ]
 hobbies: [ { title: 'cooking', frequency: 5 } ]
 ```
+
 lets create a users collection with there hobbies, now let's say we want to find all users who have a hobby of sports. Now one problem we have is of course with that structure, where hobbies are embedded documents and not just strings so how to query a embedded documents.
 
 ```
 db.users.find({"hobbies.title": "sprots"})
 ```
-we have to use path and wrapping it in double quotation marks with dot notation same like assecing the nested object. always use path embedded approach("hobbies.title.n"), not only on directly embedded documents. 
+
+we have to use path and wrapping it in double quotation marks with dot notation same like assecing the nested object. always use path embedded approach("hobbies.title.n"), not only on directly embedded documents.
 
 ```
 db.users.insertOne({name: "gourav", age: 32, phone: 99876543213, hobbies: ["cooking", "game", "codeing"]})
 
 db.users.find({hobbies: {$size: 3}})
 ```
+
 $size - this operater check the array element count. {hobbies: {$size: 3} this return only those document have 3 hobbies.
 
 lets create a movie collection with genres
+
 ```
 db.movieGenres.insertMany([{name: "movie 1", genres: [ 'Drama', 'Action']},{name: "movie 1", genres: [ 'Action', 'Drama']}])
 ```
+
 now i want to find movies that have a genre of exactly Drama and Action but I don't care about the order.
 
 ```
 db.movieGenres.find({genres: [ 'Drama', 'Action']})
 ```
+
 if i find like this then i will get only first document because this document is exactly equal to first document, the Drama being the first element and Action being the second element.
 
 But what if I don't care about the order? Well then, the all operator can help you.
+
 ```
 db.movieGenres.find({genres: {$all : [ 'Drama', 'Action']}})
 ```
+
 this will do is it will now search genre for these keywords and it will make sure that these items do have to exist in genre and this doesn't care about the order. And therefore now I find both documents even though the order is different within genre.
 
 6. Comments
@@ -346,6 +372,7 @@ this will do is it will now search genre for these keywords and it will make sur
 projection operators that allow us to transform or kind of change the data we get back to some extent, these are read related operators.
 
 - project embedded document:
+
 ```
 db.movie.find({}, {"schedule.time": 1})
 ```
@@ -354,6 +381,7 @@ db.movie.find({}, {"schedule.time": 1})
 2. $elemMatch
 
 now update our hobbies collection.
+
 ```
 hobbies: [
   { title: 'cooking', frequency: 5 },
@@ -365,16 +393,19 @@ hobbies: [
   { title: 'yoga', frequency: 3 }
 ]
 ```
+
 Now let's say we want to find all users who have a hobby of "sports" and the frequency should be equal to "2".
 
 ```
  db.users.find({$and: [{"hobbies.title": "sports"}, {"hobbies.frequency": {$gte: 2}}]})
 ```
+
 this returns both surya and rahul because both have hobbies = sports and frequency = gte 2
 
 ```
  db.users.find({$and: [{"hobbies.title": "sports"}, {"hobbies.frequency": {$gte: 3}}]})
 ```
+
 now I'm looking for a frequency greater than or equal to 3, i find surya its ok beasue his frequency = 3, but what's that? I still find rahul even though for his sports hobby, the frequency is 2.
 
 so what's going wrong here?
@@ -383,13 +414,15 @@ The thing is with this query, we're basically saying find me all documents where
 ```
 db.users.find({hobbies: {$elemMatch: {title: "sports", frequency: {$gte: 3}}}})
 ```
+
 Now of course it's not that uncommon that you want to ensure that one and the same element should match your conditions and for that, you have the elemMatch operator. we essentially you could say describe how a single document should look like to match our query and if it finds at least one document in the hobbies array that has a title sports and a frequency greater than or equal than three, it will include the overall document that contains that hobbies array in the result set.
 
 3. $meta
 4. $slice
-we can use $slice to slice the array element. we can use either $slice(2) or $slice[1, 2] like this [how many to skip, how many to show]
+   we can use $slice to slice the array element. we can use either $slice(2) or $slice[1, 2] like this [how many to skip, how many to show]
 
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+---
+
 3. Update
 
 - updateOne(filter, data, options)
@@ -430,11 +463,14 @@ replaceOne use to replace the existing document to new document. replaceOne dont
 which we'll cover in the update module allow you to modify and add additional data and this therefore does of course change the data. Inc, $inc is an example which will increment a field by one or any amount you specify.
 
 $inc operator use for increment and decrement the value. we can use $icn like this.
+
 ```
 db.users.updateOne({ _id: ObjectId('665ef8fc93092d666d0d56f8')}, {$inc: {age: 1}})
 db.users.updateOne({ _id: ObjectId('665ef8fc93092d666d0d56f8')}, {$inc: {age: -1}})
 ```
+
 by the way you can also combine $inc with $set, you need to pass first argument as $inc then next or second argument for $set like this.
+
 ```
 db.users.updateOne({ _id: ObjectId('665ef8fc93092d666d0d56f8')}, {$inc: {age: 1}, $set: {isSports: true}})
 ```
@@ -446,25 +482,31 @@ $max - to check maximum value.
 $mul - use for multiply.
 
 $unset - unset allows you to unset or remove a field or key value pair. its simplely delete that field.
+
 ```
 db.users.updateOne({ _id: ObjectId('665ef8fc93092d666d0d56f8')}, {$unset: {phone: ""}})
 ```
+
 the syntax is such that you add a document as a value and then here I want to unset phone and the value you specify here is totally up to you. Typically you use an empty string but this will basically be ignored, the important part is the field name.
 
 $rename - rename operator helps us to rename any field. The rename operator takes a document as a value where you then specify the field name you want to rename. the new field name should be in string.
+
 ```
 db.users.updateMany({}, {$rename: {age: "newAge"}})
 ```
 
 upsert - simply is a combination of the word update and insert and means that if the document does not exist, it will be created. And you can do that by passing a third argument to updateOne or updateMany method.
+
 ```
 db.users.updateOne({name: "john"}, {$set: {age: 29, hobbies: [{title: "gaming", frequency: 3}, {title: "reading", frequency: 5}]}}, {upsert: true})
 ```
+
 now if john is not present on our collection then it will add or insert that.
 
 - Updating Matched Array Elements:
 
 Let's say we want to update all documents whoever matches, all documents where the person has a hobby of sports with a frequency greater or equal to 3.
+
 ```
 db.users.find({hobbies: {$elemMatch: {title: "sports", frequency: {$gte: 3}}}})
 ```
@@ -472,17 +514,21 @@ db.users.find({hobbies: {$elemMatch: {title: "sports", frequency: {$gte: 3}}}})
 I want to change something in exactly that element which I found in the array. {title: "sports", frequency: {$gte: 3}
 
 I don't want to assign a brand new value to hobbies, I only want to update the element in hobbies which matched my condition here. And to do that, we can use a different syntax, I can enclose it in quotation marks and say hobbies.$ and this will automatically refer to the element matched in our filter, so in our query and then here, I can define the new value.
+
 ```
 db.users.updateMany({hobbies: {$elemMatch: {title: "sports", frequency: {$gte: 3}}}}, {$set: {"hobbies.$": {title: "new_sports", frequency: 1}}})
 ```
+
 { title: 'new_sports', frequency: 1 }
 
 "hobbies.$" -> this will override our old value.
 
 if I don't want to override the entire document, what i want to add a new field then we can define new field name like this "hobbies.$.newFrequency".
+
 ```
 db.users.updateMany({hobbies: {$elemMatch: {title: "new_sports", frequency: 1}}}, {$set: {"hobbies.$.newFrequency": 4}})
 ```
+
 { title: 'new_sports', frequency: 1, newFrequency: 4 }
 
 when you have a query where you do select a specific element in an array and you then want to update exactly that element in your set operation. And just to make it really clear, inside of set, you could of course have updated totally other fields as well.
@@ -495,21 +541,25 @@ NOTE - "hobbies.$" this will update only first matching element of the array, if
 - Adding Elements to Arrays:
 
 $push - its push a new element onto the array. i can do that by now specifying a document where I describe first of all the array to which I want to push, hobbies and then the element I want to push.
+
 ```
 db.users.updateOne({_id: ObjectId('665ef8fc93092d666d0d56f9')}, {$push: {hobbies: {title: "gaming", frequency: 5}}})
 ```
 
 Push can also be used with more than one document. using $each which then is an array of multiple documents that should be added.
+
 ```
 db.users.updateOne({_id: ObjectId('665ef8fc93092d666d0d56f9')}, {$push: {hobbies: {$each: [{}, {}]}}})
 ```
 
 before pushing the element into the array we can sort the element using $sort.
+
 ```
 db.users.updateOne({_id: ObjectId('665ef8fc93092d666d0d56f9')}, {$push: {hobbies: {$each: [{}, {}], $sort: {frequency: 1}}}})
 ```
 
 - Removing Elements from Arrays:
+
 ```
 db.users.updateOne({_id: ObjectId('665ef8fc93092d666d0d56f9')}, {$pull: {hobbies: {title: "sports"}}})
 ```
@@ -517,16 +567,19 @@ db.users.updateOne({_id: ObjectId('665ef8fc93092d666d0d56f9')}, {$pull: {hobbies
 $pull are using for remove some spcific element
 
 $pop are using to remove first or last element of the array. 1 = last element and -1 = first element.
+
 ```
 db.users.updateOne({_id: ObjectId('665ef8fc93092d666d0d56f9')}, {$pop: {hobbies: 1}})
 ```
 
-$addToSet - this operator also can push single item on the array. The question is what is the difference to push?. Previously with push, we were able to push duplicate values. The difference is that addToSet adds unique values only, so if you try to add a value that's already part of the array, it will not be added again. 
+$addToSet - this operator also can push single item on the array. The question is what is the difference to push?. Previously with push, we were able to push duplicate values. The difference is that addToSet adds unique values only, so if you try to add a value that's already part of the array, it will not be added again.
+
 ```
 db.users.updateOne({_id: ObjectId('665ef8fc93092d666d0d56f9')}, {$addToSet: {hobbies: {title: "gaming", frequency: 5}}})
 ```
 
-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+---
+
 4. Delete
 
 - deleteOne(filter, options)
@@ -548,16 +601,19 @@ db.flights.deleteMany({marker: 'toDelete', departureAirport: 'TXT'})
 ```
 db.flights.deleteMany({})
 ```
+
 we could also use delete many and pass an empty pair of curly braces, this should delete all elements. but if we want to delete some specific documents then we have to pass some filter.
 
 ```
 db.flights.drop()
 ```
+
 you can delete a full collection using drop() command.
 
 ```
 db.dropDatabase()
 ```
+
 deleting a database we can use dropDatabase() command.
 
 ## find() & the Cursor Object :
@@ -603,6 +659,7 @@ you can use forEach to loop through the collection
 ```
 db.movie.find().count()
 ```
+
 count simply has a look at the cursor and determines how many elements can I get from the cursor.
 
 ```
@@ -610,32 +667,38 @@ const dbCursor = db.users.find()
 dbCursor.next()
 dbCursor.next()
 ```
+
 next gives me the next document.
 
 ```
 dbCursor.hasNext()
 ```
+
 hasNext() indicates there is no data to be fetched.
 
 ```
 db.movie.find().sort({"rating.average": 1})
 ```
+
 Now we can sort by adding .sort if we use pretty, before pretty but always after find, now sort takes a document where you describe how to sort.
 now the value you specify here describes the direction in which you sort, 1 means ascending, -1 means descending.
 
 ```
 db.movie.find().sort({"rating.average": 1, runtime: -1})
 ```
+
 So you can combine multiple, as many as you want sorting criteria.
 
 ```
 db.movie.find().skip(100)
 ```
+
 skip() method use for skiping document/results.
 
 ```
 db.movie.find().limit(2)
 ```
+
 so limit also allows us to retrieve a certain amount of documents but only the amount of documents we specify.
 
 ## Embedded Documents & Arrays :
@@ -979,27 +1042,32 @@ So let's say we have customers who can buy products, so we're looking at orders,
 So what is authentication and authorization? These are actually two concepts which are closely related. Authentication is all about identifying users in your database, authorization on the other hand is all about identifying what these users may then actually do in the database.
 
 1. Creating and Editing User -
-Users are created by a user with sufficient permissions with the createUser() command. we also have updateUsers(), Now keep in mind update user basically means that the administrator updates the user.
+   Users are created by a user with sufficient permissions with the createUser() command. we also have updateUsers(), Now keep in mind update user basically means that the administrator updates the user.
 
 createUser()
+
 ```
 db.createUser({user: "surya", pwd: "1234", roles: ["userAdminAnyDatabase"]})
 ```
+
 the first argument should be user, and the value here will be the username. the second argument is pwd its for password. Now you also need to add the roles and for that, you add a roles key which holds an array of roles.
 
 ```
 db.auth("surya", "1234")
 ```
+
 Now what you will need to do is you now need to authenticate and you can do this with the auth command. first argument for username and second argument for password.
 
 ```
 mongosh -u surya -p 1234 --authenticationDatabase admin
 ```
+
 this is another way of authenticating and the authentication database part here is really important.
 
 updateUsers()
 
 lets another user with only read access
+
 ```
 db.createUser({user: "appdev", pwd: "1234appdev", roles: ["read"]})
 ```
@@ -1007,23 +1075,26 @@ db.createUser({user: "appdev", pwd: "1234appdev", roles: ["read"]})
 ```
 db.updateUser("appdev", {roles: ["readWrite"]})
 ```
+
 Now the db update user command takes as a first argument the name of the user you want the update, and then the second argument is the document where you describe the change to the user.
 
 ```
 db.updateUser("appdev", {roles: ["readWrite", {role: "read", db: "blog"}]})
 ```
+
 we can give another database access to a user. now this user have read and write access on movies database and only read access on blog database.
 
 ```
 db.getUser("appdev")
 ```
+
 {
-  _id: 'movies.appdev',
-  userId: UUID('9013af45-ed80-42f6-8995-f457288a80dd'),
-  user: 'appdev',
-  db: 'movies',
-  roles: [ { role: 'readWrite', db: 'movies' }, { role: 'read', db: 'blog' } ],
-  mechanisms: [ 'SCRAM-SHA-1', 'SCRAM-SHA-256' ]
+\_id: 'movies.appdev',
+userId: UUID('9013af45-ed80-42f6-8995-f457288a80dd'),
+user: 'appdev',
+db: 'movies',
+roles: [ { role: 'readWrite', db: 'movies' }, { role: 'read', db: 'blog' } ],
+mechanisms: [ 'SCRAM-SHA-1', 'SCRAM-SHA-256' ]
 }
 
 using getUser we can get user info like all giving roles, userId etc.
@@ -1031,13 +1102,14 @@ using getUser we can get user info like all giving roles, userId etc.
 ```
 db.logout()
 ```
+
 logout() for user logout form shell.
 
 2. Roles in mongoDB -
 
 a. Database User (read, readWrite) there we got two roles, a read and a readWrite role and these roles are pretty self-explanatory. You either got a role for users who only need to find data, so who can run all these queries, use the aggregation framework but will not be able to insert or update or delete data, you can do that if you gotreadWrite role.
 
-b. Database Admin (dbAdmin, userAdmin, dbOwner) 
+b. Database Admin (dbAdmin, userAdmin, dbOwner)
 
 c. All Database Roles (readAnyDatabase, readWriteAnyDatabase, userAdminAnyDatabase, dbAdminAnyDatabase)
 
@@ -1045,7 +1117,7 @@ d. Cluster Admin (clusterManager, clusterMonitor, hostManager, clusterAdmin)
 
 e. Backup/Restore (backup, restore)
 
-f. Superuser (dbOwner, userAdmin, userAdminAnyDatabase, root) if you assign the db owner or a user admin role to the admin database this will kind of be a special case because the admin database is a special database and these users are then able to create new users and also change their own role and that's why it's a super user. All these roles here basically allow a user to create new users and change users, so these users can create whatever they need and therefore these are very powerful roles. 
+f. Superuser (dbOwner, userAdmin, userAdminAnyDatabase, root) if you assign the db owner or a user admin role to the admin database this will kind of be a special case because the admin database is a special database and these users are then able to create new users and also change their own role and that's why it's a super user. All these roles here basically allow a user to create new users and change users, so these users can create whatever they need and therefore these are very powerful roles.
 The root role is basically the most powerful role, if you assign this to a user, this user can do everything.
 
 ## Capped Collections:
@@ -1055,6 +1127,7 @@ Capped collections are a special type of collection which you have to create exp
 ```
 db.createCollection("capped", {capped: true, size: 10000, max: 3})
 ```
+
 Here, the option you want to set is capped to true and this will turn this into a capped collection.
 
 Now by default, it will have a size limit of 4 bytes but you can set size to any other value and it will then automatically be turned into a multiple of 256 bytes.
@@ -1062,9 +1135,11 @@ Now by default, it will have a size limit of 4 bytes but you can set size to any
 Max is optional and Max allows you to also define the amount of data that can be stored in there, measured in documents, so I could cap this to three documents at most.
 
 now insert atlest 3 data in there.
+
 ```
 db.capped.insertMany([{name: "surya"}, {name: "rahul"}, {name: "gourav"}])
 ```
+
 the important thing is for a capped collection, the order in which we retrieve the documents is always the order in which they were inserted.
 
 ```
@@ -1072,11 +1147,13 @@ the important thing is for a capped collection, the order in which we retrieve t
   { _id: ObjectId('6662a917986dd42040679f79'), name: 'rahul' },
   { _id: ObjectId('6662a917986dd42040679f7a'), name: 'gourav' }
 ```
+
 now if i try to insert another data it will clears the oldest document and then its add a new document.
 
 ```
  db.capped.find().sort({$natural: -1})
 ```
+
 if you want to change the order and sort and reverse, there is a special key you can use and that is $natural, the natural order by which it is sorted and then for example use -1 and then it's sorted the other way around.
 
 ```
@@ -1100,28 +1177,33 @@ db.user.insertOne({name: "surya"})
 
 db.post.insertOne({title: "this is my first post", creator: ObjectId('6662df1a986dd42040679f7c')})
 ```
+
 Now for a transaction, we need a session. session basically means that all our requests are grouped together logically you could say. You create a session and you store it in a constant
 
 ```
 const session = db.getMongo().startSession()
 ```
+
 now I have a session stored in there. Now that session again basically is just an object that now allows me to group all requests that I send based on that session together, that is how you can think about it.
 
 ```
 session.startTransaction()
 ```
+
 Now you can use that session to start a transaction,
 
 ```
 const userCol = session.getDatabase("transaction").user
 const postCol = session.getDatabase("transaction").post
 ```
+
 So now we started the transaction, we can now get access to a collection and store them on a const variable.
 
 ```
 userCol.deleteOne({_id: ObjectId('6662ec244a7b209007b07815')})
 { acknowledged: true, deletedCount: 1 }
 ```
+
 now we can write all the commands we want to execute against these collections here.
 
 after hititng enter i get the acknowledged but if I repeat db users find, you see the user still is in the database, so it hasn't been deleted yet, it was just saved as a to-do.
@@ -1130,6 +1212,7 @@ after hititng enter i get the acknowledged but if I repeat db users find, you se
 postCol.deleteOne({creator: ObjectId('6662ec244a7b209007b07815')})
 { acknowledged: true, deletedCount: 1 }
 ```
+
 now deleting the post that have same user id.
 
 ```
@@ -1139,6 +1222,7 @@ or
 
 session.abortTransaction()
 ```
+
 to really commit these changes to the real database, we have to run session commitTransaction(), there also would be abortTransaction().
 
 after commiting transaction if you find user and post collection then you can see all data are deleted.
@@ -1146,27 +1230,33 @@ after commiting transaction if you find user and post collection then you can se
 ## Nemeric Data:
 
 1. Integers (int32) - these are full numbers, so we have no decimal places here.
+
 ```
 db.number.insertOne({name: "surya", age: NumberInt("24")})
 ```
+
 {
- age: 24
+age: 24
 }
 
 2. Longs (int64) - this also full numbers no decimal places.
+
 ```
 db.number.insertOne({longInt: NumberLong("99999999999999999")})
 ```
+
 {
-  longInt: Long('99999999999999999')
+longInt: Long('99999999999999999')
 }
-  
+
 3. Doubles (64bit) - this actually store numbers with decimal places like 1.66. that 64 bit double is the default value type mongodb uses if you pass a number with no extra information, no matter, by the way that is important, no matter if that number is theoretically an integer and has no decimal place or not, it will be stored as a 64 bit double when passing in the number through the shell. (Doubles is the default value of javascript and shell is based on Javascript)
+
 ```
 db.number.insertOne({doubles: 19.99})
 ```
 
 4. High Precision Doubles (128bit) - We also have a special type, high precision doubles in mongodb, these are also numbers with decimal places but there's one important difference to the normal doubles.
+
 ```
 db.number.insertOne({a: NumberDecimal("0.3333"), b: NumberDecimal("0.1111")})
 ```
@@ -1176,22 +1266,24 @@ db.number.insertOne({a: NumberDecimal("0.3333"), b: NumberDecimal("0.1111")})
 ```
 db.places.insertOne({name: "Rahara Bazar", location: {type: "Point", coordinates: [88.38697257116631, 22.723284221295522]}})
 ```
+
 { type: <GeoJSON type> , coordinates: <coordinates> }
 
 - a field named type that specifies the GeoJSON object type
 - a field named coordinates that specifies the object's coordinates. If specifying latitude and longitude coordinates, list the longitude first, and then latitude [<longitude>, <latitude> ] and you'll need to remember that to store it correctly in mongodb.
 
- - location: { type: 'Point', coordinates: [ 88.3808289, 22.7205771 ] }
- and this is called GeoJSON object.
+- location: { type: 'Point', coordinates: [ 88.3808289, 22.7205771 ] }
+  and this is called GeoJSON object.
 
 - find places that are near my current location using geo query.
 
 ```
 db.places.find({location: {$near: {$geometry: {type: "Point", coordinates: [88.37977427176402, 22.723750899966575]}}}})
-``` 
+```
+
 $near is one of the operators provided by mongodb for working with geospatial data.
 
-$near requires another document as a value and there, you can now define a geometry for which you want to check if it's near. The  $geometry again is a document and this now describes a geo json object.
+$near requires another document as a value and there, you can now define a geometry for which you want to check if it's near. The $geometry again is a document and this now describes a geo json object.
 
 if you run this query then you will get a error and this said "unable to find index for $geoNear query", so first we need to create a index for geoNear query and the index value should be "2dsphere".
 
@@ -1227,11 +1319,13 @@ db.places.insertOne({name: "Place 2" - outside Polygon, location: {type: "Point"
 
 db.places.find({location: {$geoWithin: {$geometry: {type: "Polygon", coordinates: [[p1, p2, p3, p4, p1]]}}}})
 ```
+
 this query returns places those are inside this Polygon.
 
--  Finding Out If a User Is Inside a Specific Area:
+- Finding Out If a User Is Inside a Specific Area:
 
 So let's first of all store a polygon which we used here to find if a location inside this polygon or not.
+
 ```
 const p1 = [88.37977427176410, 22.723750899966550]
 const p2 = [88.3797742717620, 22.723750899966560]
@@ -1240,7 +1334,9 @@ const p4 = [88.37977427176340, 22.723750899966580]
 
 db.areas.insertOne({name: "golden gate park", area: {type: "Polygon", coordinates: [[p1, p2, p3, p4, p1]]}})
 ```
+
 after storing our polygon next we have to add one index
+
 ```
 db.areas.createIndex({area: "2dsphere"})
 ```
@@ -1251,10 +1347,9 @@ So with the index added, we can write our query and there we want to find out ba
 db.areas.find({area: {$geoIntersects: {$geometry: {type: "Point", coordinates: [88.38697257116611, 22.723284221295644]}}}})
 ```
 
--  Finding Places Within a Certain Radius:
+- Finding Places Within a Certain Radius:
 
 first enter some points then I want to find all elements in an unsorted order that are within a certain radius.
-
 
 $centerSphere - This is a helpful operator that allows you to quickly get a circle around a point. centerSphere takes an array as a value and that array has two elements. the first element is another array which holds your coordinates, again longitude and then latitude and The second element in this array is the radius then and now this radius needs to be translated manually from meters or miles to radians.
 
@@ -1274,7 +1369,7 @@ $near give us a sorted result but geoWithin return unsorted list.
 
 Aggregation in MongoDB is a powerful feature that allows for complex data transformations and computations on collections of documents. It enables users to group, filter, and manipulate data to produce summarized results.
 
-It is typically performed using the MongoDB Aggregation Pipeline which is a framework for data aggregation modeled on the concept of data processing pipelines. 
+It is typically performed using the MongoDB Aggregation Pipeline which is a framework for data aggregation modeled on the concept of data processing pipelines.
 
 You have your collection and now the aggregation framework is all about building a pipeline of steps that runs on the data that is retrieved from your collection and then gives you the output in the form you needed and these steps are sometimes related to what you know from find, match.
 
@@ -1290,6 +1385,7 @@ so all the things you learn there on how you can query documents, how you can ma
 ```
 db.person.aggregate([ { $match: { gender: "female" } }])
 ```
+
 $group stage - the group stage allows you to well group your data by a certain field or by multiple fields.
 
 ```
@@ -1303,11 +1399,11 @@ db.person.aggregate([
 { $group: { _id: "$location.state", totalPerson: { $sum: 1 } } }] )
 ```
 
-1. the first one always is _id. Now _id defines by which fields you want to group. the value for _id will be a document.
-the group stage, you often see that syntax because that will be interpreted in a special way and it will basically allow you to define multiple fields by which you want to group. in this case i want to group by location state.
+1. the first one always is \_id. Now \_id defines by which fields you want to group. the value for \_id will be a document.
+   the group stage, you often see that syntax because that will be interpreted in a special way and it will basically allow you to define multiple fields by which you want to group. in this case i want to group by location state.
 
 2. we will use the sum here by using $sum and then a value you want to add for every document that is grouped together.
-So if we have 3 people from the same location state, sum would be incremented by 1 times 3.
+   So if we have 3 people from the same location state, sum would be incremented by 1 times 3.
 
 3. It's also important to understand that group does accumulate data, now that simply means that you might have multiple documents with the same state and group will only output one, so three documents with the same state will be merged into one because you are aggregating, you're building a sum in this case.
 
@@ -1324,6 +1420,7 @@ db.person.aggregate([
 { $sort: {totalPerson: 1} }
 ])
 ```
+
 1 = low to high
 -1 = hign to low
 
@@ -1338,6 +1435,7 @@ db.person.aggregate([
 we can project our filed same as projection method. but here We can add new fields with custom value. let's say the name should be one field instead of this embedded document and this is something we can easily do with this project stage.
 
 $concat allows you concatenate two strings and you simply pass an array here which contains the two strings.
+
 ```
 db.person.aggregate([
 {$project: {_id: 0, gender: 1, fullName: {$concat: ["$name.first", " ", "$name.last"]}}}
@@ -1345,6 +1443,7 @@ db.person.aggregate([
 ```
 
 $toUpper - its take a string and return a upper case string.
+
 ```
 db.person.aggregate([{
 $project: {
@@ -1359,7 +1458,8 @@ $project: {
 }
 }])
 ```
-$substrCP - substrCP operator which returns the substring of well a string, so a part of a string. SubstrCP takes an array, the first argument is the string, The second argument is the starting character of your substring, this will be zero because strings are is zero indexed, hen it asks you for how many characters should be included in the substring and that should be one here. 
+
+$substrCP - substrCP operator which returns the substring of well a string, so a part of a string. SubstrCP takes an array, the first argument is the string, The second argument is the starting character of your substring, this will be zero because strings are is zero indexed, hen it asks you for how many characters should be included in the substring and that should be one here.
 
 substrCP: ["string", start index, total char]
 
@@ -1386,6 +1486,7 @@ $project: {
 ```
 
 $convert - this convert operator are use for converting the data type.
+
 1. the first field is input and there you simply define which value should be converted.
 2. The second field and this is the last field that you need to pass is the to field, the to field defines the type you want to convert to.
 3. You also can define on error and on null values, so default values that should be returned in case the transformation fails.
@@ -1504,7 +1605,7 @@ NOTE - find method ordering dose't matter, but here ordering does matter because
 
 - Writing Pipeline Results Into a New Collection:
 
-the $out stage for output and this will take the result of your operation and write it into a collection, either a new one which is created on the fly or an existing one. 
+the $out stage for output and this will take the result of your operation and write it into a collection, either a new one which is created on the fly or an existing one.
 
 ```
 db.person.aggregate([
@@ -1520,7 +1621,8 @@ db.person.aggregate([
 
 - $push ($group accumulators)
 
-1. grouping arrays 
+1. grouping arrays
+
 ```
 db.friend.insertMany([
   {
@@ -1565,7 +1667,6 @@ db.friend.aggregate([
 we want to combine the hobby arrays, so that we know which hobbies exist for this age group and for that age group.
 push operator, the push operator allows you to push a new element into the all hobbies array for every incoming document.
 
-
 $unwind - the unwind stage is always a great stage when you have an array of which you want to pull out the elements.
 in prevouse query we push array inside arrary but we want to push all grouped element in the same array, so unwind stage can helps us to do this.
 
@@ -1575,10 +1676,11 @@ db.friend.aggregate([
 { $group: {_id: "$age", allHobbies: {$push: "$hobbies"}} }
 ])
 ```
+
 output ->
 [
-  { _id: 29, allHobbies: [ 'Sports', 'Cooking', 'Cooking', 'Skiing' ] },
-  { _id: 30, allHobbies: [ 'Eating', 'Data Analytics' ] }
+{ \_id: 29, allHobbies: [ 'Sports', 'Cooking', 'Cooking', 'Skiing' ] },
+{ \_id: 30, allHobbies: [ 'Eating', 'Data Analytics' ] }
 ]
 
 Now we have another problem. duplicate values are pushed, to solve this issue we can use an alternative to push. Instead of push, you can use addToSet, addToSet does almost the same but avoids duplicate values. If it finds that an entry already exists, it just doesn't push the new value.
@@ -1589,10 +1691,11 @@ db.friend.aggregate([
 { $group: {_id: "$age", allHobbies: {$addToSet: "$hobbies"}} }
 ])
 ```
-output 
+
+output
 [
-  { _id: 29, allHobbies: [ 'Cooking', 'Skiing', 'Sports' ] },
-  { _id: 30, allHobbies: [ 'Data Analytics', 'Eating' ] }
+{ \_id: 29, allHobbies: [ 'Cooking', 'Skiing', 'Sports' ] },
+{ \_id: 30, allHobbies: [ 'Data Analytics', 'Eating' ] }
 ]
 
 - Using Projection with Arrays:
@@ -1606,6 +1709,7 @@ db.friend.aggregate([
 { $project: {_id: 0, examScores: {$slice: ["$examScores", 1]}}},
 ])
 ```
+
 this get only first elemnt for the array. but some time you want to last one or last 2 then you have to use -1 or -2.
 
 ```
@@ -1615,6 +1719,7 @@ db.friend.aggregate([
 ```
 
 $size - the size operator which calculates the length of an array.
+
 ```
 db.friend.aggregate([
 { $project: {_id: 0, lenghtExamScores: {$size: "$examScores"}}}
@@ -1654,7 +1759,7 @@ Indexes are data structures that support the efficient execution of queries in M
 Example:
 let's say this is my collection of documents, the products collection, now by default if I don't have an index on seller set, mongodb will go ahead and do a so-called collection scan, now that simply means that mongodb to fulfill this query will go through the entire collection, look at every single document and see if seller equals Max and as you can imagine for very large collections with thousands or millions of documents, this can take a while.
 
-so you would create an index for the seller key of the products collection here and that index then exist additionally to the collection and the index is essentially an ordered list of all the values that are placed or stored in the seller key for all the documents. every item in the index has a pointer to the full document it belongs to. Now this allows mongodb to do a so-called index scan to fulfill this query. 
+so you would create an index for the seller key of the products collection here and that index then exist additionally to the collection and the index is essentially an ordered list of all the values that are placed or stored in the seller key for all the documents. every item in the index has a pointer to the full document it belongs to. Now this allows mongodb to do a so-called index scan to fulfill this query.
 
 so it doesn't have to look at the first three records if it's only looking for records starting with M or to be precise, records equal to Max. So it can very efficiently go through that index and then find the matching products because of that ordering.
 
@@ -1665,6 +1770,7 @@ However you also shouldn't overdo it with the indexes, you will pay some perform
 ```
 db.person.createIndex({"dob.age": 1})
 ```
+
 you can create indexes on embedded fields and top level fields as well. now values in that age field in an ascending (1) or descending (-1) order.
 
 ```
@@ -1691,7 +1797,8 @@ compound index simply is an index with more than one field. this will essentiall
 db.person.createIndex({"dob.age": 1, gender: 1})
 ```
 
-now this will create a index like this 33 male, 34 female and so on. now, 
+now this will create a index like this 33 male, 34 female and so on. now,
+
 1. if we run query with both dob and gender then its use IXSCAN.
 
 ```
@@ -1708,7 +1815,7 @@ db.person.explain().find({"dob.age" : 40, gender: "male"})
 ```
 
 - sorting using index:
-So that's also something important to keep in mind that when you're sorting documents and you have a lot of documents at a given query, you might need an index to be able to sort them at all because mongodb has this threshold of 32 megabytes which it reserves in memory for the fetched documents and sorting them.
+  So that's also something important to keep in mind that when you're sorting documents and you have a lot of documents at a given query, you might need an index to be able to sort them at all because mongodb has this threshold of 32 megabytes which it reserves in memory for the fetched documents and sorting them.
 
 ```
 db.person.find({"dob.age": 35}).sort()
@@ -1725,16 +1832,15 @@ db.person.getIndexes()
 
 output -
 [
-  { v: 2, key: { _id: 1 }, name: '_id_' },
-  {
-    v: 2,
-    key: { 'dob.age': 1, gender: 1 },
-    name: 'dob.age_1_gender_1'
-  }
+{ v: 2, key: { _id: 1 }, name: '_id_' },
+{
+v: 2,
+key: { 'dob.age': 1, gender: 1 },
+name: 'dob.age_1_gender_1'
+}
 ]
 
 the first one is actually one on the ID field and this is a default index mongodb maintains for you and then come your own indexes but you have this default index out of the box for every collection you create and therefore this is an index that will always be maintained by mongodb here automatically.
-
 
 - configure the index
 
@@ -1743,5 +1849,5 @@ createIndex({index name}, {configure index})
 ```
 db.person.createIndex({email: 1}, {unique: true})
 ```
-So unique indexes can help you as a developer ensure data consistency and help you avoid duplicate data for fields that you need to have unique. 
 
+So unique indexes can help you as a developer ensure data consistency and help you avoid duplicate data for fields that you need to have unique.
