@@ -1736,7 +1736,12 @@ output -
 the first one is actually one on the ID field and this is a default index mongodb maintains for you and then come your own indexes but you have this default index out of the box for every collection you create and therefore this is an index that will always be maintained by mongodb here automatically.
 
 
+- configure the index
 
+createIndex({index name}, {configure index})
 
-
+```
+db.person.createIndex({email: 1}, {unique: true})
+```
+So unique indexes can help you as a developer ensure data consistency and help you avoid duplicate data for fields that you need to have unique. 
 
