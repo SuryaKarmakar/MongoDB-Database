@@ -1646,3 +1646,97 @@ db.books.aggregate([
 { $lookup: {from: "authors", localField: "author", foreignField: "_id"}}
 ])
 ```
+
+## Indexing:
+
+Indexes are data structures that support the efficient execution of queries in MongoDB. They contain copies of parts of the data in documents to make queries more efficient. Without indexes, MongoDB must scan every document in a collection to find the documents that match each query.
+
+Example:
+let's say this is my collection of documents, the products collection, now by default if I don't have an index on seller set, mongodb will go ahead and do a so-called collection scan, now that simply means that mongodb to fulfill this query will go through the entire collection, look at every single document and see if seller equals Max and as you can imagine for very large collections with thousands or millions of documents, this can take a while.
+
+so you would create an index for the seller key of the products collection here and that index then exist additionally to the collection and the index is essentially an ordered list of all the values that are placed or stored in the seller key for all the documents. every item in the index has a pointer to the full document it belongs to. Now this allows mongodb to do a so-called index scan to fulfill this query. 
+
+so it doesn't have to look at the first three records if it's only looking for records starting with M or to be precise, records equal to Max. So it can very efficiently go through that index and then find the matching products because of that ordering.
+
+However you also shouldn't overdo it with the indexes, you will pay some performance cost on inserts and update because that extra index that has to be maintained needs to be updated with every insert. if you add a new document, you also have to add a new element to the index.
+
+- create index:
+
+```
+db.person.createIndex({"dob.age": 1})
+```
+you can create indexes on embedded fields and top level fields as well. now values in that age field in an ascending (1) or descending (-1) order.
+
+```
+db.person.find({"dob.age": {$gt: 60}})
+```
+
+- remove index:
+
+```
+db.person.dropIndex({"dob.age": 1})
+```
+
+- when to use index?
+
+if you have a query that will return a large portion or the majority of your documents, an index can actually be slower because you then just have an extra step to go through your almost entire index list and then you have to go to the collection and get all these documents,
+
+So if you have queries that regularly return the majority or all of your documents, an index will not really help you there, it might even slow down the execution and that is important to keep in mind as a first restriction that you need to know when planning your queries.
+
+- compound index:
+
+compound index simply is an index with more than one field. this will essentially store one index where each entry in the index is now not on a single value but two combined values. So it does not create two indexes, that's important, it creates one index but one index where every element is a well, connected value.
+
+```
+db.person.createIndex({"dob.age": 1, gender: 1})
+```
+
+now this will create a index like this 33 male, 34 female and so on. now, 
+1. if we run query with both dob and gender then its use IXSCAN.
+
+```
+db.person.find({"dob.age" : 40, gender: "male"})
+db.person.explain().find({"dob.age" : 40, gender: "male"})
+```
+
+2. if I just look for the age, it also used an index scan and it used that same compound index even though I never specified the gender in this request here. But the compound index can be used from left to right so to say,
+
+3. gender alone won't work though, so if I try to look for all males with gender male, you'll see that of course works but it uses a collection scan and not an index scan because it can't look into that second value standalone. because you just have to go through all the values because they are sorted by these key value pairs and the first value of course defines the sorting for the overall index, so 33, 33 comes before 34. The male and female parts are then also sorted but only within their category, so only for 33, 34, 35, of course the male and female parts are not sorted on the overall list, makes sense right, because they're grouped together with the age numbers.
+
+```
+ db.person.explain().find({gender: "male"})
+```
+
+- sorting using index:
+So that's also something important to keep in mind that when you're sorting documents and you have a lot of documents at a given query, you might need an index to be able to sort them at all because mongodb has this threshold of 32 megabytes which it reserves in memory for the fetched documents and sorting them.
+
+```
+db.person.find({"dob.age": 35}).sort()
+db.person.explain().find({"dob.age": 35}).sort()
+```
+
+- get index:
+
+you can check all the created index uisng this query.
+
+```
+db.person.getIndexes()
+```
+
+output -
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  {
+    v: 2,
+    key: { 'dob.age': 1, gender: 1 },
+    name: 'dob.age_1_gender_1'
+  }
+]
+
+the first one is actually one on the ID field and this is a default index mongodb maintains for you and then come your own indexes but you have this default index out of the box for every collection you create and therefore this is an index that will always be maintained by mongodb here automatically.
+
+
+
+
+
+
