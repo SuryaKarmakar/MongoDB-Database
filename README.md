@@ -1851,3 +1851,163 @@ db.person.createIndex({email: 1}, {unique: true})
 ```
 
 So unique indexes can help you as a developer ensure data consistency and help you avoid duplicate data for fields that you need to have unique.
+
+- partial index:
+
+lets say you are typically only look for persons older than 60. Having an index on the date of birth age field then might make sense but the problem of course is that you have a lot of values in your index that you never actually query for.
+
+you can actually create a partial index where you only add the values you're regularly going to look at,
+
+```
+db.person.createIndex({"dob.age": 1}, {partialFilterExpression: {"dob.age": {$gt: 60}}})
+```
+in this partialFilterExpression we can use any filters and fileds. like if we want to create a index only for male then we can do that like this,
+
+```
+db.person.createIndex({"dob.age": 1}, {partialFilterExpression: {gender: "male"}})
+```
+this will create a list of male dob list.
+
+Note - default is compound index. 
+
+- time to live index:
+
+that can be very helpful for a lot of applications where you have self-destroying data, let's say sessions of users where you want to clear their data after some duration or anything like that.
+
+```
+db.session.createIndex({createdAt: 1}, {expireAfterSeconds: 10})
+```
+This is a special feature mongodb offers and that only works on date indexes or on date fields, on other fields it will just be ignored, you could add it but it will be ignored and there I could say every element should be removed after 10 seconds.
+
+after adding this index, insert some document and then try to find after 10 second you can see inserted data will be removed after 10 second. you can veryfi this to find the inserted data before 10 sec.
+
+## Query Diagnosis:
+
+```
+db.person.explain("queryPlanner").find({"dob.age": 35})
+```
+1. The important part here is that you can execute it like this or pass query planner as an argument to get that default minimal output where it simply tells you the winning plan and not much else.
+
+```
+db.person.explain("executionStats").find({"dob.age": 35})
+```
+2. you use execution stats, what we did a couple of times in this module already to see detailed summary outputs and see information about the winning plan and possibly rejected plan and also some information about how long it took.
+
+```
+db.person.explain("allPlansExecution").find({"dob.age": 35})
+```
+3. There also is the all plans execution option which also show shows detailed summaries and which also gives you more information about how the winning plan was chosen.
+
+look at the milliseconds process time and also compare this to a solution where you don't use an index, so that you'll also have a look whether index scan really beats a collection scan, and another important measure is that you compare the number of keys in the index, that is what it means in the output are examined, how many documents that are examined and how many documents that are returned.
+
+- Covered query in indexing:
+
+some time we just want the only one filed that is stored as e index, like name or only age then we can only return our index listing key(index value) only not the full document. this make our query super fast.
+
+```
+db.customer.find({name: "Max"}, {_id: 0, name: 1})
+```
+
+- Winning plan
+
+suppose we have multiple index so mongodb use all approch and who's ever get the value first that approch will be use and rest of the approch will be rejected.
+
+- Multi key index:
+
+```
+db.contact.insertOne({name: "Max", hobbies: ["Cokking", "Sports"], address: [{street: "Main Street"}, {street: "Second Street"}]})
+```
+
+```
+db.contact.createIndex({hobbies: 1})
+```
+
+if we create a index with array then multi key indexs are created. multikey indexes are working like normal indexes but they are stored up differently. What mongodb does is it pulls out all the values in your index key, so in hobbies in my case here, so it pulls out all the values in the array I stored in there and stores them as separate elements in an index.
+
+So this is something to keep in mind, multikey indexes are possible but typically are also bigger.
+
+```
+db.contact.createIndex({address: 1})
+db.contact.explain().find({"address.street": "Main Street"})
+```
+now if we run the second query then we can see it actually used a collection scan and not our index. The reason for that is that our index of course holds the whole documents and not the fields of the documents, so mongodb does not go so far to pull out the elements of an array and then pull out all field values of a nested document
+that array might hold. 
+
+```
+db.contact.explain().find({address: {street: "Main Street"}})
+```
+now if run this then this will use because it is the whole document which is in our index in the end. 
+
+```
+db.contact.createIndex({"address.street": 1})
+```
+you can also use an index on a field in an embedded document which is part of an array with that multikey feature. You should just be aware that of course using multi multikey features.
+
+Note - Still multikey index is super helpful if you have queries that regularly target array values or even nested values or values in an embedded document in arrays.
+
+- restrictions to use multi key index:
+
+we can create single field with multi key index like this,
+```
+db.contact.createIndex({name: 1, hobbies: 1})
+```
+
+but we cant created two or more multikey indexes, so addresses one and hobbies one will not work because you can't index parallel arrays. 
+
+```
+db.contact.createIndex({address: 1, hobbies: 1})
+```
+
+The reason for that is simple, mongodb would have to store the cartesian product of the values of both indexes, of both arrays, so it would have to pull out all the addresses and for every address, it would have to store all the hobbies. So if you have two addresses and five hobbies, you already have to store 10 values and that of course
+becomes even worse the more values you have in addresses, so that is why this is not possible. Compound indexes with multikey indexes are possible as you see here but only with one multikey index, so with one array, not with multiple arrays. You can have multiple multikey indexes as you can see here in separate indexes but in one and the same index, only one array can be included.
+
+- Text index:
+
+text index is a special kind of index supported by mongodb which will essentially turn this text into an array of single words and it will store it as such, so it stores it essentially as if you had an array of these single words, one extra thing it does for you is it removes all the stop words and it stems all words, so that you have an array of keywords essentially and things like is or the or a are not stored there because that is typically something you don't search for because it's all over the place, the keywords are one matter for text searches typically.
+
+```
+db.products.insertMany([{title: "A Book", description: "This is a awesome book about young artish!"}, {title: "Red T-Shirt", description:"This T-Shirt is red and it's pretty awesome!"}])
+
+db.products.createIndex({description: "text"})
+```
+This will create a text index which is a special kind of index where mongodb will go ahead and as I mentioned, remove all the stop words and store all the keywords in an array essentially, so let's have a look at this.
+
+```
+db.products.find({$text: {$search: "awesome"}})
+```
+why don't I have to add description, instead we just add hey I want to search for some text. The reason for that is that you may only have one text index per collection because text indexes are pretty expensive so you only have one text index where this could look into (per collection).
+
+- sorting text index:
+
+```
+db.products.find({$text: {$search: "awesome t-shirt"}}).sort({score: {$meta: "textScore"}})
+```
+
+you can extract this meta information text score and both these words have to be written like this from mongodb so to say, it manages that for us and we can see how it scores the results and as you can see, we can then use that to order too.
+
+- droping text index:
+
+```
+db.products.dropIndex("index_name")
+```
+
+you cant drop text index same like normal index, to drop text index you have to use index name and that you can find form getIndexes() method
+
+- creating combine text index:
+
+```
+db.products.createIndex({title: "text", description: "text"})
+```
+Now there is still will only be one text index but it will contain the keywords of both the title and the description field. now i can search title also.
+
+- creating index on background:
+
+```
+db.products.createIndex({title: "text"}, {background: true})
+```
+
+
+
+
+
+
