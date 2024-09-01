@@ -2005,8 +2005,7 @@ Now there is still will only be one text index but it will contain the keywords 
 ```
 db.products.createIndex({title: "text"}, {background: true})
 ```
-
-
+##
 
 
 
